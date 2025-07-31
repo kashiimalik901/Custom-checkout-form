@@ -1,7 +1,7 @@
-// Test script to verify payment email functionality
-const testPaymentEmail = async () => {
+// Test script to verify order confirmation email functionality
+const testOrderConfirmationEmail = async () => {
   try {
-    console.log('Testing payment email functionality...')
+    console.log('Testing order confirmation email functionality...')
     
     const testData = {
       paymentId: 'TEST-PAYMENT-123',
@@ -15,12 +15,12 @@ const testPaymentEmail = async () => {
         endAddress: 'Munich, Germany',
         distance: 585,
         services: ['towing-germany'],
-        notes: 'Test payment email',
+        notes: 'Test order confirmation email',
       },
       totalAmount: 1234.56,
     }
 
-    console.log('Sending test payment data:', testData)
+    console.log('Sending test order confirmation data:', testData)
 
     const response = await fetch('http://localhost:3000/api/process-payment', {
       method: 'POST',
@@ -31,15 +31,15 @@ const testPaymentEmail = async () => {
     })
 
     const result = await response.json()
-    console.log('Payment processing result:', result)
+    console.log('Order confirmation result:', result)
 
     if (result.success) {
-      console.log('✅ Payment processing test successful!')
+      console.log('✅ Order confirmation test successful!')
       console.log('Order ID:', result.orderId)
       console.log('Email sent:', result.emailSent)
       console.log('Email message:', result.emailMessage)
     } else {
-      console.log('❌ Payment processing test failed:', result.message)
+      console.log('❌ Order confirmation test failed:', result.message)
     }
 
   } catch (error) {
@@ -48,4 +48,4 @@ const testPaymentEmail = async () => {
 }
 
 // Run the test
-testPaymentEmail() 
+testOrderConfirmationEmail() 

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { sendQuoteEmail } from "@/lib/email-service"
+import { sendOrderConfirmationEmail } from "@/lib/email-service"
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +14,10 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
 
-    // Send confirmation email with payment details
+    // Generate order ID
+    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
+    // Send order confirmation email with payment details
     const emailData = {
       customerName: customerInfo.name,
       email: customerInfo.email,
@@ -25,23 +28,23 @@ export async function POST(request: NextRequest) {
       selectedServices: serviceDetails.services,
       additionalNotes: serviceDetails.notes || "",
       totalCost: totalAmount,
+      paymentId: paymentId,
+      orderId: orderId,
+      transactionId: paymentId, // PayPal transaction ID
     }
 
-    console.log("Attempting to send payment confirmation email...")
+    console.log("Attempting to send order confirmation email...")
     console.log("Email data:", emailData)
     
-    const emailResult = await sendQuoteEmail(emailData)
+    const emailResult = await sendOrderConfirmationEmail(emailData)
     console.log("Email result:", emailResult)
 
     if (!emailResult.success) {
-      console.error("Failed to send confirmation email:", emailResult.error)
+      console.error("Failed to send order confirmation email:", emailResult.error)
       // Continue with payment processing even if email fails
     } else {
-      console.log("✅ Payment confirmation email sent successfully")
+      console.log("✅ Order confirmation email sent successfully")
     }
-
-    // Generate order ID
-    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
     // TODO: Save to database
     // TODO: Schedule service
