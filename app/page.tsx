@@ -732,11 +732,11 @@ export default function ServiceCheckoutForm() {
             <div className="grid md:grid-cols-2 gap-4 text-white">
               <div>
                 <p className="font-medium">Email Support:</p>
-                <p className="text-yellow-400">support@yourcompany.com</p>
+                <p className="text-yellow-400">transport2023de@gmail.com</p>
               </div>
               <div>
                 <p className="font-medium">Phone Support:</p>
-                <p className="text-yellow-400">+1 (555) 123-4567</p>
+                <p className="text-yellow-400">+996-238-8338</p>
               </div>
             </div>
             <p className="text-gray-400 mt-4 text-sm">Business hours: Monday - Friday, 9:00 AM - 6:00 PM</p>
