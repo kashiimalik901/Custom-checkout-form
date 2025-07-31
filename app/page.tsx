@@ -7,8 +7,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X } from "lucide-react"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
+import { toast } from "sonner"
 
 const services = [
   { id: "towing-germany", name: "Towing within Germany", baseFee: 60, pricePerKm: 1.0, description: "€60 base fee + €1 per km" },
@@ -223,11 +226,11 @@ export default function ServiceCheckoutForm() {
         }, 100)
       } else {
         console.error("Distance calculation failed:", data.message)
-        alert(`Could not calculate distance: ${data.message}`)
+        toast.error(`Could not calculate distance: ${data.message}`)
       }
     } catch (error) {
       console.error("Error calculating distance:", error)
-      alert("Error calculating distance. Please check your internet connection and try again.")
+      toast.error("Error calculating distance. Please check your internet connection and try again.")
     } finally {
       setIsCalculatingDistance(false)
       console.log("Distance calculation completed")
@@ -306,15 +309,15 @@ export default function ServiceCheckoutForm() {
 
       if (data.success) {
         const fileMessage = data.filesAttached > 0 ? ` with ${data.filesAttached} attached file(s)` : ''
-        alert(`Estimate request sent successfully${fileMessage}! You will receive a detailed quote via email within 24 hours.`)
+        toast.success(`Estimate request sent successfully${fileMessage}! You will receive a detailed quote via email within 24 hours.`)
         setFormData((prev) => ({ ...prev, estimateRequested: true }))
         setAttachedFiles([]) // Clear attached files after successful submission
       } else {
-        alert("Failed to send estimate request. Please try again.")
+        toast.error("Failed to send estimate request. Please try again.")
       }
     } catch (error) {
       console.error("Error sending estimate:", error)
-      alert("Error sending estimate request. Please try again.")
+      toast.error("Error sending estimate request. Please try again.")
     }
   }
 
@@ -325,12 +328,12 @@ export default function ServiceCheckoutForm() {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain']
       
       if (file.size > maxSize) {
-        alert(`File ${file.name} is too large. Maximum size is 10MB.`)
+        toast.error(`File ${file.name} is too large. Maximum size is 10MB.`)
         return false
       }
       
       if (!allowedTypes.includes(file.type)) {
-        alert(`File ${file.name} is not a supported type. Please upload images, PDFs, or text files.`)
+        toast.error(`File ${file.name} is not a supported type. Please upload images, PDFs, or text files.`)
         return false
       }
       
@@ -353,6 +356,11 @@ export default function ServiceCheckoutForm() {
   const paypalOptions = {
     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "YOUR_PAYPAL_CLIENT_ID",
     currency: "EUR",
+    intent: "capture",
+    components: "buttons",
+    "enable-funding": "paylater,venmo",
+    "disable-funding": "paypalcredit",
+    "data-client-token": "abc123xyz==",
   }
 
   // Close suggestions when clicking outside
@@ -752,6 +760,7 @@ export default function ServiceCheckoutForm() {
                           }}
                           onApprove={async (data, actions) => {
                             try {
+                              toast.loading("Processing payment...")
                               const details = await actions.order?.capture()
 
                               // Send order confirmation
@@ -779,9 +788,18 @@ export default function ServiceCheckoutForm() {
                               })
 
                               const result = await response.json()
+                              toast.dismiss()
 
                               if (result.success) {
-                                alert(`✅ Payment successful!\n\nTransaction ID: ${details?.id}\nOrder ID: ${result.orderId}\n\nA confirmation email has been sent to your email address.`)
+                                const emailStatus = result.emailSent ? "✅ Email sent" : "⚠️ Email not sent (check console)"
+                                toast.success(
+                                  `Payment Successful!`,
+                                  {
+                                    description: `Transaction ID: ${details?.id}\nOrder ID: ${result.orderId}\n${emailStatus}`,
+                                    duration: 8000,
+                                  }
+                                )
+                                
                                 // Reset form after successful payment
                                 setFormData({
                                   customerName: "",
@@ -800,17 +818,21 @@ export default function ServiceCheckoutForm() {
                                 setAttachedFiles([])
                                 setShowPayPal(false)
                               } else {
-                                alert(`❌ Payment processing failed: ${result.message}`)
+                                toast.error(`Payment processing failed: ${result.message}`)
                               }
                             } catch (error) {
+                              toast.dismiss()
                               console.error("Payment processing error:", error)
-                              alert("❌ Payment processing failed. Please try again or contact support.")
+                              toast.error("Payment processing failed. Please try again or contact support.")
                             }
                           }}
-                          onError={(err) => {
-                            console.error("PayPal error:", err)
-                            alert("Payment failed. Please try again.")
-                          }}
+                                                      onError={(err) => {
+                              console.error("PayPal error:", err)
+                              toast.error("Payment failed. Please try again or contact support.")
+                            }}
+                            onCancel={() => {
+                              toast.info("Payment cancelled by user")
+                            }}
                           style={{
                             layout: "vertical",
                             color: "gold",

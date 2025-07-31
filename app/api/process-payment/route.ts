@@ -27,11 +27,17 @@ export async function POST(request: NextRequest) {
       totalCost: totalAmount,
     }
 
+    console.log("Attempting to send payment confirmation email...")
+    console.log("Email data:", emailData)
+    
     const emailResult = await sendQuoteEmail(emailData)
+    console.log("Email result:", emailResult)
 
     if (!emailResult.success) {
       console.error("Failed to send confirmation email:", emailResult.error)
       // Continue with payment processing even if email fails
+    } else {
+      console.log("✅ Payment confirmation email sent successfully")
     }
 
     // Generate order ID
@@ -46,6 +52,7 @@ export async function POST(request: NextRequest) {
       orderId: orderId,
       paymentId: paymentId,
       emailSent: emailResult.success,
+      emailMessage: emailResult.message || "Email sent successfully",
     })
   } catch (error) {
     console.error("Error processing payment:", error)
