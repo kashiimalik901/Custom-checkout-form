@@ -3,8 +3,17 @@ import { sendQuoteEmail } from "@/lib/email-service"
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { customerName, email, phone, startAddress, endAddress, distance, selectedServices, additionalNotes } = body
+    const formData = await request.formData()
+    
+    // Extract text fields
+    const customerName = formData.get('customerName') as string
+    const email = formData.get('email') as string
+    const phone = formData.get('phone') as string
+    const startAddress = formData.get('startAddress') as string
+    const endAddress = formData.get('endAddress') as string
+    const distance = parseFloat(formData.get('distance') as string)
+    const selectedServices = JSON.parse(formData.get('selectedServices') as string) as string[]
+    const additionalNotes = formData.get('additionalNotes') as string
 
     console.log("Estimate request received:", {
       customerName,
@@ -33,7 +42,11 @@ export async function POST(request: NextRequest) {
       return total + serviceCost
     }, 0) * 1.19 // Add 19% VAT
 
-    // Send email with quote details
+    // Handle file attachments
+    const files = formData.getAll('files') as File[]
+    const validFiles = files.filter(file => file.size > 0)
+
+    // Send email with quote details and attachments
     const emailResult = await sendQuoteEmail({
       customerName,
       email,
@@ -44,6 +57,7 @@ export async function POST(request: NextRequest) {
       selectedServices,
       additionalNotes,
       totalCost,
+      attachments: validFiles,
     })
 
     if (emailResult.success) {
@@ -51,6 +65,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: "Estimate request sent successfully! You will receive a detailed quote via email.",
         messageId: emailResult.messageId,
+        filesAttached: validFiles.length,
       })
     } else {
       console.error("Email sending failed:", emailResult.error)

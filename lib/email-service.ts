@@ -10,6 +10,7 @@ interface EmailData {
   selectedServices: string[]
   additionalNotes: string
   totalCost?: number
+  attachments?: File[]
 }
 
 // Create transporter for Google SMTP
@@ -112,7 +113,7 @@ export const sendQuoteEmail = async (data: EmailData) => {
   try {
     const transporter = createTransporter()
     
-    const mailOptions = {
+    const mailOptions: any = {
       from: process.env.EMAIL_USER,
       to: 'kashiimalick@gmail.com', // Your email address
       subject: `Transport Quote - ${data.customerName} (${data.distance}km)`,
@@ -137,6 +138,14 @@ Total Cost (including 19% VAT): ${data.totalCost ? `€${data.totalCost.toFixed(
 Service Area: Germany, Austria, Slovenia, Croatia
 All prices include 19% German VAT
       `
+    }
+
+    // Add attachments if any
+    if (data.attachments && data.attachments.length > 0) {
+      mailOptions.attachments = data.attachments.map(file => ({
+        filename: file.name,
+        content: file,
+      }))
     }
 
     const result = await transporter.sendMail(mailOptions)

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search } from "lucide-react"
+import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X } from "lucide-react"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
 
 const services = [
@@ -37,6 +37,9 @@ export default function ServiceCheckoutForm() {
     additionalNotes: "",
     estimateRequested: false,
   })
+
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [totalCost, setTotalCost] = useState(0)
   const [showPayPal, setShowPayPal] = useState(false)
@@ -277,28 +280,35 @@ export default function ServiceCheckoutForm() {
 
   const handleRequestEstimate = async () => {
     try {
+      const formDataToSend = new FormData()
+      
+      // Add text fields
+      formDataToSend.append('customerName', formData.customerName)
+      formDataToSend.append('email', formData.email)
+      formDataToSend.append('phone', formData.phone)
+      formDataToSend.append('startAddress', formData.startAddress)
+      formDataToSend.append('endAddress', formData.endAddress)
+      formDataToSend.append('distance', formData.distance.toString())
+      formDataToSend.append('selectedServices', JSON.stringify(formData.selectedServices))
+      formDataToSend.append('additionalNotes', formData.additionalNotes)
+      
+      // Add files
+      attachedFiles.forEach(file => {
+        formDataToSend.append('files', file)
+      })
+
       const response = await fetch("/api/send-estimate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerName: formData.customerName,
-          email: formData.email,
-          phone: formData.phone,
-          startAddress: formData.startAddress,
-          endAddress: formData.endAddress,
-          distance: formData.distance,
-          selectedServices: formData.selectedServices,
-          additionalNotes: formData.additionalNotes,
-        }),
+        body: formDataToSend,
       })
 
       const data = await response.json()
 
       if (data.success) {
-        alert("Estimate request sent successfully! You will receive a detailed quote via email within 24 hours.")
+        const fileMessage = data.filesAttached > 0 ? ` with ${data.filesAttached} attached file(s)` : ''
+        alert(`Estimate request sent successfully${fileMessage}! You will receive a detailed quote via email within 24 hours.`)
         setFormData((prev) => ({ ...prev, estimateRequested: true }))
+        setAttachedFiles([]) // Clear attached files after successful submission
       } else {
         alert("Failed to send estimate request. Please try again.")
       }
@@ -306,6 +316,32 @@ export default function ServiceCheckoutForm() {
       console.error("Error sending estimate:", error)
       alert("Error sending estimate request. Please try again.")
     }
+  }
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    const validFiles = files.filter(file => {
+      const maxSize = 10 * 1024 * 1024 // 10MB limit
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain']
+      
+      if (file.size > maxSize) {
+        alert(`File ${file.name} is too large. Maximum size is 10MB.`)
+        return false
+      }
+      
+      if (!allowedTypes.includes(file.type)) {
+        alert(`File ${file.name} is not a supported type. Please upload images, PDFs, or text files.`)
+        return false
+      }
+      
+      return true
+    })
+    
+    setAttachedFiles(prev => [...prev, ...validFiles])
+  }
+
+  const removeFile = (index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleProceedToPayment = () => {
@@ -551,7 +587,7 @@ export default function ServiceCheckoutForm() {
           <CardHeader>
             <CardTitle className="text-yellow-400">Additional Information</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <div>
               <Label htmlFor="additionalNotes" className="text-white">
                 Special Instructions or Notes
@@ -564,6 +600,64 @@ export default function ServiceCheckoutForm() {
                 placeholder="Any special requirements, fragile items, time preferences, etc."
                 rows={3}
               />
+            </div>
+
+            {/* File Upload Section */}
+            <div>
+              <Label className="text-white">
+                Attach Files (Optional)
+              </Label>
+              <p className="text-sm text-gray-400 mb-2">
+                Upload photos of your vehicle, documents, or other relevant files (Max 10MB each)
+              </p>
+              
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black bg-transparent"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Choose Files
+                </Button>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*,.pdf,.txt"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+
+                {/* File List */}
+                {attachedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-300">Attached Files:</p>
+                    {attachedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <Upload className="w-4 h-4 text-yellow-400" />
+                          <span className="text-white text-sm">{file.name}</span>
+                          <span className="text-gray-400 text-xs">
+                            ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFile(index)}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-900"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
