@@ -1,15 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { sendQuoteEmail } from "@/lib/email-service"
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { paymentId, customerInfo, serviceDetails, totalAmount } = body
-
-    // In a real application, you would:
-    // 1. Verify the PayPal payment
-    // 2. Save the order to a database
-    // 3. Send confirmation emails to customer and business
-    // 4. Update inventory or schedule the service
 
     console.log("Payment processed:", {
       paymentId,
@@ -19,21 +14,48 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     })
 
-    // TODO: Send confirmation emails
+    // Send confirmation email with payment details
+    const emailData = {
+      customerName: customerInfo.name,
+      email: customerInfo.email,
+      phone: customerInfo.phone,
+      startAddress: serviceDetails.startAddress,
+      endAddress: serviceDetails.endAddress,
+      distance: serviceDetails.distance,
+      selectedServices: serviceDetails.services,
+      additionalNotes: serviceDetails.notes || "",
+      totalCost: totalAmount,
+    }
+
+    const emailResult = await sendQuoteEmail(emailData)
+
+    if (!emailResult.success) {
+      console.error("Failed to send confirmation email:", emailResult.error)
+      // Continue with payment processing even if email fails
+    }
+
+    // Generate order ID
+    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
     // TODO: Save to database
     // TODO: Schedule service
-
-    // Placeholder for sending confirmation emails
-    // Placeholder for saving to database
-    // Placeholder for scheduling service
 
     return NextResponse.json({
       success: true,
       message: "Payment processed successfully",
-      orderId: `ORD-${Date.now()}`,
+      orderId: orderId,
+      paymentId: paymentId,
+      emailSent: emailResult.success,
     })
   } catch (error) {
     console.error("Error processing payment:", error)
-    return NextResponse.json({ success: false, message: "Failed to process payment" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        success: false, 
+        message: "Failed to process payment",
+        error: error instanceof Error ? error.message : "Unknown error"
+      }, 
+      { status: 500 }
+    )
   }
 }

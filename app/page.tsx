@@ -351,7 +351,7 @@ export default function ServiceCheckoutForm() {
   }
 
   const paypalOptions = {
-    "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "YOUR_PAYPAL_CLIENT_ID",
+    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "YOUR_PAYPAL_CLIENT_ID",
     currency: "EUR",
   }
 
@@ -738,6 +738,7 @@ export default function ServiceCheckoutForm() {
                         <PayPalButtons
                           createOrder={(data, actions) => {
                             return actions.order.create({
+                              intent: "CAPTURE",
                               purchase_units: [
                                 {
                                   amount: {
@@ -750,33 +751,61 @@ export default function ServiceCheckoutForm() {
                             })
                           }}
                           onApprove={async (data, actions) => {
-                            const details = await actions.order?.capture()
+                            try {
+                              const details = await actions.order?.capture()
 
-                            // Send order confirmation
-                            await fetch("/api/process-payment", {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({
-                                paymentId: details?.id,
-                                customerInfo: {
-                                  name: formData.customerName,
-                                  email: formData.email,
-                                  phone: formData.phone,
+                              // Send order confirmation
+                              const response = await fetch("/api/process-payment", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
                                 },
-                                serviceDetails: {
-                                  startAddress: formData.startAddress,
-                                  endAddress: formData.endAddress,
-                                  distance: formData.distance,
-                                  services: formData.selectedServices,
-                                  notes: formData.additionalNotes,
-                                },
-                                totalAmount: totalCost,
-                              }),
-                            })
+                                body: JSON.stringify({
+                                  paymentId: details?.id,
+                                  customerInfo: {
+                                    name: formData.customerName,
+                                    email: formData.email,
+                                    phone: formData.phone,
+                                  },
+                                  serviceDetails: {
+                                    startAddress: formData.startAddress,
+                                    endAddress: formData.endAddress,
+                                    distance: formData.distance,
+                                    services: formData.selectedServices,
+                                    notes: formData.additionalNotes,
+                                  },
+                                  totalAmount: totalCost,
+                                }),
+                              })
 
-                            alert(`Payment successful! Transaction ID: ${details?.id}`)
+                              const result = await response.json()
+
+                              if (result.success) {
+                                alert(`✅ Payment successful!\n\nTransaction ID: ${details?.id}\nOrder ID: ${result.orderId}\n\nA confirmation email has been sent to your email address.`)
+                                // Reset form after successful payment
+                                setFormData({
+                                  customerName: "",
+                                  email: "",
+                                  phone: "",
+                                  startAddress: "",
+                                  endAddress: "",
+                                  startPlaceId: "",
+                                  endPlaceId: "",
+                                  distance: 0,
+                                  selectedServices: [],
+                                  additionalNotes: "",
+                                  estimateRequested: false,
+                                })
+                                setTotalCost(0)
+                                setAttachedFiles([])
+                                setShowPayPal(false)
+                              } else {
+                                alert(`❌ Payment processing failed: ${result.message}`)
+                              }
+                            } catch (error) {
+                              console.error("Payment processing error:", error)
+                              alert("❌ Payment processing failed. Please try again or contact support.")
+                            }
                           }}
                           onError={(err) => {
                             console.error("PayPal error:", err)

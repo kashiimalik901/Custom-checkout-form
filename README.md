@@ -151,8 +151,31 @@ All prices include 19% German VAT:
 
 ```env
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+EMAIL_USER=your_gmail_address@gmail.com
+EMAIL_PASSWORD=your_gmail_app_password
 NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
 ```
+
+### Setting up PayPal
+
+1. **Create a PayPal Developer Account**
+   - Go to [PayPal Developer Portal](https://developer.paypal.com/)
+   - Sign up for a developer account
+
+2. **Create a PayPal App**
+   - Navigate to "My Apps & Credentials"
+   - Click "Create App"
+   - Choose "Business" app type
+   - Give your app a name (e.g., "ENGEL-TRANS")
+
+3. **Get Your Client ID**
+   - Copy the "Client ID" from your app
+   - Add it to your `.env.local` file as `NEXT_PUBLIC_PAYPAL_CLIENT_ID`
+
+4. **Test vs Live Environment**
+   - Use "Sandbox" for testing (no real payments)
+   - Use "Live" for production (real payments)
+   - Switch between environments in the PayPal Developer Portal
 
 ## 📝 License
 
