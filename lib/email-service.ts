@@ -15,12 +15,24 @@ interface EmailData {
 
 // Create transporter for Google SMTP
 const createTransporter = () => {
+  console.log('Creating email transporter...')
+  console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Not set')
+  console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Set' : 'Not set')
+  
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD environment variables.')
+  }
+
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // Your Gmail address
-      pass: process.env.EMAIL_PASSWORD, // Your Gmail app password
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
+    secure: true,
+    tls: {
+      rejectUnauthorized: false
+    }
   })
 }
 
@@ -108,10 +120,53 @@ const createEmailHTML = (data: EmailData) => {
   `
 }
 
+// Fallback function to log quote details to console
+const logQuoteToConsole = (data: EmailData) => {
+  console.log('\n' + '='.repeat(60))
+  console.log('🚛 ENGEL-TRANS - NEW QUOTE REQUEST')
+  console.log('='.repeat(60))
+  console.log(`📅 Date: ${new Date().toLocaleString('de-DE')}`)
+  console.log(`👤 Customer: ${data.customerName}`)
+  console.log(`📧 Email: ${data.email}`)
+  console.log(`📞 Phone: ${data.phone}`)
+  console.log(`📍 Route: ${data.startAddress} → ${data.endAddress}`)
+  console.log(`📏 Distance: ${data.distance} km`)
+  console.log(`🛠️ Services: ${formatServices(data.selectedServices).join(', ')}`)
+  if (data.additionalNotes) {
+    console.log(`📝 Notes: ${data.additionalNotes}`)
+  }
+  if (data.totalCost) {
+    console.log(`💰 Total Cost (with 19% VAT): €${data.totalCost.toFixed(2)}`)
+  }
+  if (data.attachments && data.attachments.length > 0) {
+    console.log(`📎 Attachments: ${data.attachments.length} file(s)`)
+    data.attachments.forEach((file, index) => {
+      console.log(`   ${index + 1}. ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`)
+    })
+  }
+  console.log('='.repeat(60) + '\n')
+}
+
 // Send email function
 export const sendQuoteEmail = async (data: EmailData) => {
   try {
+    // Check if email credentials are configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log('⚠️ Email credentials not configured. Logging quote to console instead.')
+      logQuoteToConsole(data)
+      return { 
+        success: true, 
+        messageId: 'console-log',
+        message: 'Quote logged to console (email not configured)' 
+      }
+    }
+
+    console.log('Starting email send process...')
     const transporter = createTransporter()
+    
+    // Verify transporter
+    await transporter.verify()
+    console.log('Email transporter verified successfully')
     
     const mailOptions: any = {
       from: process.env.EMAIL_USER,
@@ -142,17 +197,37 @@ All prices include 19% German VAT
 
     // Add attachments if any
     if (data.attachments && data.attachments.length > 0) {
-      mailOptions.attachments = data.attachments.map(file => ({
-        filename: file.name,
-        content: file,
+      console.log(`Adding ${data.attachments.length} attachments to email`)
+      mailOptions.attachments = await Promise.all(data.attachments.map(async file => {
+        // Convert File to Buffer for nodemailer
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        
+        return {
+          filename: file.name,
+          content: buffer,
+          contentType: file.type,
+        }
       }))
     }
 
+    console.log('Sending email...')
     const result = await transporter.sendMail(mailOptions)
     console.log('Email sent successfully:', result.messageId)
     return { success: true, messageId: result.messageId }
   } catch (error) {
     console.error('Error sending email:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Detailed error:', errorMessage)
+    
+    // Fallback to console logging if email fails
+    console.log('⚠️ Email failed. Logging quote to console as fallback.')
+    logQuoteToConsole(data)
+    
+    return { 
+      success: false, 
+      error: errorMessage,
+      message: 'Email failed but quote logged to console' 
+    }
   }
 } 
