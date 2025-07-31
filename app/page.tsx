@@ -338,9 +338,9 @@ export default function ServiceCheckoutForm() {
       {/* Header */}
       <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-yellow-400 text-center">Service Booking & Checkout</h1>
+          <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
           <p className="text-gray-300 text-center mt-2">
-            Professional transport services with automatic distance calculation
+            TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: 996-238 8338
           </p>
         </div>
       </header>
@@ -747,7 +747,7 @@ export default function ServiceCheckoutForm() {
       {/* Footer */}
       <footer className="bg-black border-t-2 border-yellow-400 mt-12">
         <div className="container mx-auto px-4 py-6 text-center">
-          <p className="text-gray-400">© 2024 Your Transport Service. All rights reserved.</p>
+          <p className="text-gray-400">© 2024 ENGEL-TRANS. All rights reserved.</p>
         </div>
       </footer>
     </div>

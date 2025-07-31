@@ -114,7 +114,7 @@ export const sendQuoteEmail = async (data: EmailData) => {
     
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: 'transport2023de@gmail.com', // Support email address
+      to: 'kashiimalick@gmail.com', // Your email address
       subject: `Transport Quote - ${data.customerName} (${data.distance}km)`,
       html: createEmailHTML(data),
       text: `
