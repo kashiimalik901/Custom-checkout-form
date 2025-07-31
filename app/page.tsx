@@ -357,10 +357,6 @@ export default function ServiceCheckoutForm() {
     clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "YOUR_PAYPAL_CLIENT_ID",
     currency: "EUR",
     intent: "capture",
-    components: "buttons",
-    "enable-funding": "paylater,venmo",
-    "disable-funding": "paypalcredit",
-    "data-client-token": "abc123xyz==",
   }
 
   // Close suggestions when clicking outside
@@ -742,8 +738,9 @@ export default function ServiceCheckoutForm() {
 
                   {showPayPal && (
                     <div className="mt-4">
-                      <PayPalScriptProvider options={paypalOptions}>
-                        <PayPalButtons
+                      {process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID !== "YOUR_PAYPAL_CLIENT_ID" ? (
+                        <PayPalScriptProvider options={paypalOptions}>
+                          <PayPalButtons
                           createOrder={(data, actions) => {
                             return actions.order.create({
                               intent: "CAPTURE",
@@ -833,14 +830,24 @@ export default function ServiceCheckoutForm() {
                             onCancel={() => {
                               toast.info("Payment cancelled by user")
                             }}
-                          style={{
-                            layout: "vertical",
-                            color: "gold",
-                            shape: "rect",
-                            label: "paypal",
-                          }}
-                        />
-                      </PayPalScriptProvider>
+                                                      style={{
+                              layout: "vertical",
+                              color: "gold",
+                              shape: "rect",
+                              label: "paypal",
+                            }}
+                          />
+                        </PayPalScriptProvider>
+                      ) : (
+                        <div className="bg-yellow-900 border border-yellow-400 p-4 rounded-lg">
+                          <p className="text-yellow-400">
+                            ⚠️ PayPal is not configured. Please add your PayPal Client ID to the environment variables.
+                          </p>
+                          <p className="text-yellow-300 text-sm mt-2">
+                            Add NEXT_PUBLIC_PAYPAL_CLIENT_ID to your .env.local file
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
