@@ -2,81 +2,19 @@ import { type NextRequest, NextResponse } from "next/server"
 
 // Function to check if a place is in one of the allowed countries
 function isInAllowedCountry(formattedAddress: string): boolean {
-  const allowedCountries = ['Germany', 'Austria', 'Slovenia', 'Croatia', 'Deutschland', 'Österreich']
   const address = formattedAddress.toLowerCase()
   
-  // Check for exact country matches
-  const hasExactMatch = allowedCountries.some(country => 
-    address.includes(country.toLowerCase())
-  )
-  
-  if (hasExactMatch) return true
-  
-  // Additional checks for German addresses that might not explicitly mention "Germany"
-  const germanIndicators = [
-    'germany', 'deutschland', 'de', 'd-', 'munich', 'münchen', 'berlin', 'hamburg', 
-    'hannover', 'frankfurt', 'cologne', 'köln', 'düsseldorf', 'stuttgart', 'dresden',
-    'leipzig', 'nürnberg', 'nuremberg', 'bremen', 'hannover', 'bonn', 'mannheim',
-    'karlsruhe', 'wiesbaden', 'gelsenkirchen', 'münster', 'augsburg', 'braunschweig',
-    'kiel', 'aachen', 'halle', 'magdeburg', 'freiburg', 'krefeld', 'lübeck', 'oberhausen',
-    'erfurt', 'mainz', 'rostock', 'kassel', 'potsdam', 'hagen', 'saarbrücken', 'mülheim',
-    'ludwigshafen', 'leverkusen', 'oldenburg', 'neuss', 'darmstadt', 'paderborn', 'regensburg',
-    'ingolstadt', 'würzburg', 'fürth', 'wolfsburg', 'ulm', 'heilbronn', 'pforzheim',
-    'offenbach', 'bottrop', 'göttingen', 'trier', 'reutlingen', 'bremerhaven', 'koblenz',
-    'bergisch gladbach', 'remscheid', 'jena', 'erlangen', 'moers', 'siegen', 'hildesheim',
-    'salzgitter', 'cottbus', 'kaiserslautern', 'gütersloh', 'schwerin', 'düren', 'esslingen',
-    'ludwigsburg', 'wilhelmshaven', 'herne', 'tübingen', 'doberlug-kirchhain', 'detmold',
-    'lüneburg', 'marburg', 'arnstadt', 'lüdenscheid', 'bamberg', 'bayreuth', 'bocholt',
-    'celle', 'fulda', 'giessen', 'hamm', 'hanau', 'hof', 'kempten', 'landshut', 'minden',
-    'offenburg', 'passau', 'rosenheim', 'stralsund', 'traunstein', 'weiden', 'wetzlar',
-    'wismar', 'wolfenbüttel', 'zwickau'
+  // Check for country names in the address
+  const countryIndicators = [
+    'germany', 'deutschland', 'de', 'd-',
+    'austria', 'österreich', 'at',
+    'slovenia', 'slovenija', 'si',
+    'croatia', 'hrvatska', 'hr'
   ]
   
-  // Check for German city/region indicators
-  const hasGermanIndicator = germanIndicators.some(indicator => 
+  return countryIndicators.some(indicator => 
     address.includes(indicator.toLowerCase())
   )
-  
-  if (hasGermanIndicator) return true
-  
-  // Austrian city indicators
-  const austrianIndicators = [
-    'austria', 'österreich', 'vienna', 'wien', 'salzburg', 'graz', 'linz', 'innsbruck',
-    'klagenfurt', 'villach', 'wels', 'sankt pölten', 'dornbirn', 'steyr', 'wiener neustadt',
-    'feldkirch', 'bregenz', 'wolfsberg', 'leoben', 'krems', 'traun', 'amstetten', 'lienz'
-  ]
-  
-  const hasAustrianIndicator = austrianIndicators.some(indicator => 
-    address.includes(indicator.toLowerCase())
-  )
-  
-  if (hasAustrianIndicator) return true
-  
-  // Slovenian city indicators
-  const slovenianIndicators = [
-    'slovenia', 'slovenija', 'ljubljana', 'maribor', 'celje', 'kranj', 'velenje',
-    'koper', 'novo mesto', 'ptuj', 'trbovlje', 'kamnik', 'jesenice', 'nova gorica',
-    'domžale', 'škofja loka', 'murska sobota', 'ajdovščina', 'bovec', 'brežice'
-  ]
-  
-  const hasSlovenianIndicator = slovenianIndicators.some(indicator => 
-    address.includes(indicator.toLowerCase())
-  )
-  
-  if (hasSlovenianIndicator) return true
-  
-  // Croatian city indicators
-  const croatianIndicators = [
-    'croatia', 'hrvatska', 'zagreb', 'split', 'rijeka', 'osijek', 'zadar', 'slavonski brod',
-    'pula', 'šibenik', 'varazdin', 'dubrovnik', 'karlovac', 'sisak', 'velika gorica',
-    'vinkovci', 'požega', 'koprivnica', 'čakovec', 'dakovo', 'vukovar', 'kutina'
-  ]
-  
-  const hasCroatianIndicator = croatianIndicators.some(indicator => 
-    address.includes(indicator.toLowerCase())
-  )
-  
-  return hasCroatianIndicator
 }
 
 export async function POST(request: NextRequest) {
@@ -98,16 +36,16 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         textQuery: query,
         // Remove regionCode restriction to get more results
-        maxResultCount: 15, // Increased to get more results for filtering
+        maxResultCount: 20, // Increased to get more results for filtering
         locationBias: {
           rectangle: {
             low: {
-              latitude: 45.0, // Southern boundary (Slovenia/Croatia)
-              longitude: 5.0,  // Western boundary (France/Switzerland)
+              latitude: 44.0, // Southern boundary (Croatia)
+              longitude: 8.0,  // Western boundary (France)
             },
             high: {
               latitude: 55.0, // Northern boundary (Germany)
-              longitude: 25.0, // Eastern boundary (Poland/Slovakia)
+              longitude: 20.0, // Eastern boundary (Poland)
             },
           },
         },
@@ -134,7 +72,7 @@ export async function POST(request: NextRequest) {
           }
           return isAllowed
         })
-        .slice(0, 8) // Increased limit to show more results
+        .slice(0, 10) // Increased limit to show more results
         .map((place: any) => {
           // Create a better display name that emphasizes street address
           let displayName = place.displayName?.text || place.formattedAddress
