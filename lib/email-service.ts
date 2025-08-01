@@ -4,6 +4,8 @@ interface EmailData {
   customerName: string
   email: string
   phone: string
+  bookingDate?: string
+  bookingTime?: string
   startAddress: string
   endAddress: string
   distance: number
@@ -92,6 +94,8 @@ const createQuoteEmailHTML = (data: EmailData) => {
           <p><strong>Name:</strong> ${data.customerName}</p>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Phone:</strong> ${data.phone}</p>
+          ${data.bookingDate ? `<p><strong>Preferred Date:</strong> ${data.bookingDate}</p>` : ''}
+          ${data.bookingTime ? `<p><strong>Preferred Time:</strong> ${data.bookingTime}</p>` : ''}
         </div>
 
         <div class="section">
@@ -180,6 +184,8 @@ const createOrderConfirmationHTML = (data: PaymentData) => {
           <p><strong>Name:</strong> ${data.customerName}</p>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Phone:</strong> ${data.phone}</p>
+          ${data.bookingDate ? `<p><strong>Preferred Date:</strong> ${data.bookingDate}</p>` : ''}
+          ${data.bookingTime ? `<p><strong>Preferred Time:</strong> ${data.bookingTime}</p>` : ''}
         </div>
 
         <div class="section">
@@ -230,6 +236,8 @@ const logQuoteToConsole = (data: EmailData) => {
   console.log(`👤 Customer: ${data.customerName}`)
   console.log(`📧 Email: ${data.email}`)
   console.log(`📞 Phone: ${data.phone}`)
+  console.log(`📅 Preferred Date: ${data.bookingDate || 'Not specified'}`)
+  console.log(`🕐 Preferred Time: ${data.bookingTime || 'Not specified'}`)
   console.log(`📍 Route: ${data.startAddress} → ${data.endAddress}`)
   console.log(`📏 Distance: ${data.distance} km`)
   console.log(`🛠️ Requested Services: ${formatServices(data.selectedServices).join(', ')}`)
@@ -264,6 +272,8 @@ const logOrderConfirmationToConsole = (data: PaymentData) => {
   console.log(`👤 Customer: ${data.customerName}`)
   console.log(`📧 Email: ${data.email}`)
   console.log(`📞 Phone: ${data.phone}`)
+  console.log(`📅 Preferred Date: ${data.bookingDate || 'Not specified'}`)
+  console.log(`🕐 Preferred Time: ${data.bookingTime || 'Not specified'}`)
   console.log(`📍 Route: ${data.startAddress} → ${data.endAddress}`)
   console.log(`📏 Distance: ${data.distance} km`)
   console.log(`🛠️ Booked Services: ${formatServices(data.selectedServices).join(', ')}`)
@@ -314,6 +324,8 @@ NEW QUOTE REQUEST - ENGEL-TRANS
 Customer: ${data.customerName}
 Email: ${data.email}
 Phone: ${data.phone}
+${data.bookingDate ? `Preferred Date: ${data.bookingDate}` : ''}
+${data.bookingTime ? `Preferred Time: ${data.bookingTime}` : ''}
 
 Route: ${data.startAddress} → ${data.endAddress}
 Distance: ${data.distance} km
@@ -410,6 +422,8 @@ Amount Received: €${data.totalCost?.toFixed(2) || '0.00'}
 Customer: ${data.customerName}
 Email: ${data.email}
 Phone: ${data.phone}
+${data.bookingDate ? `Preferred Date: ${data.bookingDate}` : ''}
+${data.bookingTime ? `Preferred Time: ${data.bookingTime}` : ''}
 
 Route: ${data.startAddress} → ${data.endAddress}
 Distance: ${data.distance} km

@@ -9,9 +9,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X, Calendar as CalendarIcon, Clock } from "lucide-react"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { toast } from "sonner"
+import { format } from "date-fns"
 
 const services = [
   { id: "towing-germany", name: "Towing within Germany", baseFee: 60, pricePerKm: 1.0, description: "€60 base fee + €1 per km" },
@@ -31,6 +34,8 @@ export default function ServiceCheckoutForm() {
     customerName: "",
     email: "",
     phone: "",
+    bookingDate: undefined as Date | undefined,
+    bookingTime: "",
     startAddress: "",
     endAddress: "",
     startPlaceId: "",
@@ -47,6 +52,7 @@ export default function ServiceCheckoutForm() {
   const [totalCost, setTotalCost] = useState(0)
   const [showPayPal, setShowPayPal] = useState(false)
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false)
+  const [isRequestingEstimate, setIsRequestingEstimate] = useState(false)
 
   // Autocomplete states
   const [pickupSuggestions, setPickupSuggestions] = useState<PlaceSuggestion[]>([])
@@ -283,12 +289,15 @@ export default function ServiceCheckoutForm() {
 
   const handleRequestEstimate = async () => {
     try {
+      setIsRequestingEstimate(true)
       const formDataToSend = new FormData()
       
       // Add text fields
       formDataToSend.append('customerName', formData.customerName)
       formDataToSend.append('email', formData.email)
       formDataToSend.append('phone', formData.phone)
+      formDataToSend.append('bookingDate', formData.bookingDate ? formData.bookingDate.toISOString().split('T')[0] : '')
+      formDataToSend.append('bookingTime', formData.bookingTime)
       formDataToSend.append('startAddress', formData.startAddress)
       formDataToSend.append('endAddress', formData.endAddress)
       formDataToSend.append('distance', formData.distance.toString())
@@ -318,6 +327,8 @@ export default function ServiceCheckoutForm() {
     } catch (error) {
       console.error("Error sending estimate:", error)
       toast.error("Error sending estimate request. Please try again.")
+    } finally {
+      setIsRequestingEstimate(false)
     }
   }
 
@@ -434,6 +445,53 @@ export default function ServiceCheckoutForm() {
                   className="bg-black border-gray-600 text-white focus:border-yellow-400"
                   placeholder="+1 (555) 123-4567"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="bookingDate" className="text-white">
+                    Preferred Date *
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal bg-black border-gray-600 text-white hover:bg-gray-800 focus:border-yellow-400"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.bookingDate ? (
+                          format(formData.bookingDate, "PPP")
+                        ) : (
+                          <span className="text-gray-400">Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600">
+                      <Calendar
+                        mode="single"
+                        selected={formData.bookingDate}
+                        onSelect={(date) => setFormData((prev) => ({ ...prev, bookingDate: date }))}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className="bg-gray-800 text-white"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div>
+                  <Label htmlFor="bookingTime" className="text-white">
+                    Preferred Time *
+                  </Label>
+                  <Input
+                    id="bookingTime"
+                    type="time"
+                    value={formData.bookingTime}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, bookingTime: e.target.value }))}
+                    className="bg-black border-gray-600 text-white focus:border-yellow-400"
+                    placeholder="Select time"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -680,10 +738,19 @@ export default function ServiceCheckoutForm() {
                 onClick={handleRequestEstimate}
                 variant="outline"
                 className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black bg-transparent"
-                disabled={!formData.customerName || !formData.email || !formData.startAddress || !formData.endAddress}
+                disabled={!formData.customerName || !formData.email || !formData.startAddress || !formData.endAddress || isRequestingEstimate}
               >
-                <Mail className="w-4 h-4 mr-2" />
-                Request Detailed Estimate
+                {isRequestingEstimate ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400 mr-2"></div>
+                    Sending Request...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Request Detailed Estimate
+                  </>
+                )}
               </Button>
             </div>
 
@@ -774,6 +841,8 @@ export default function ServiceCheckoutForm() {
                                     phone: formData.phone,
                                   },
                                   serviceDetails: {
+                                    bookingDate: formData.bookingDate ? formData.bookingDate.toISOString().split('T')[0] : null,
+                                    bookingTime: formData.bookingTime,
                                     startAddress: formData.startAddress,
                                     endAddress: formData.endAddress,
                                     distance: formData.distance,
@@ -802,6 +871,8 @@ export default function ServiceCheckoutForm() {
                                   customerName: "",
                                   email: "",
                                   phone: "",
+                                  bookingDate: undefined,
+                                  bookingTime: "",
                                   startAddress: "",
                                   endAddress: "",
                                   startPlaceId: "",

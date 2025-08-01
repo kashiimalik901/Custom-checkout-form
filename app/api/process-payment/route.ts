@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
       customerName: customerInfo.name,
       email: customerInfo.email,
       phone: customerInfo.phone,
+      bookingDate: serviceDetails.bookingDate,
+      bookingTime: serviceDetails.bookingTime,
       startAddress: serviceDetails.startAddress,
       endAddress: serviceDetails.endAddress,
       distance: serviceDetails.distance,

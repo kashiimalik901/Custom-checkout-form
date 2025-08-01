@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
     const customerName = formData.get('customerName') as string
     const email = formData.get('email') as string
     const phone = formData.get('phone') as string
+    const bookingDate = formData.get('bookingDate') as string
+    const bookingTime = formData.get('bookingTime') as string
     const startAddress = formData.get('startAddress') as string
     const endAddress = formData.get('endAddress') as string
     const distance = parseFloat(formData.get('distance') as string)
@@ -19,6 +21,8 @@ export async function POST(request: NextRequest) {
       customerName,
       email,
       phone,
+      bookingDate,
+      bookingTime,
       startAddress,
       endAddress,
       distance,
@@ -51,6 +55,8 @@ export async function POST(request: NextRequest) {
       customerName,
       email,
       phone,
+      bookingDate,
+      bookingTime,
       startAddress,
       endAddress,
       distance,
