@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X, Calendar as CalendarIcon, Clock } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X, Calendar as CalendarIcon, Clock, AlertTriangle } from "lucide-react"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { toast } from "sonner"
 import { format } from "date-fns"
@@ -30,6 +31,9 @@ interface PlaceSuggestion {
 }
 
 export default function ServiceCheckoutForm() {
+  const [ageVerified, setAgeVerified] = useState(false)
+  const [showAgeVerification, setShowAgeVerification] = useState(true)
+  
   const [formData, setFormData] = useState({
     customerName: "",
     email: "",
@@ -358,6 +362,29 @@ export default function ServiceCheckoutForm() {
     setAttachedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const handleAgeVerification = (confirmed: boolean) => {
+    if (confirmed) {
+      setAgeVerified(true)
+      setShowAgeVerification(false)
+      toast.success("Age verification completed. Welcome to ENGEL-TRANS!")
+    } else {
+      toast.error("You must be 18 or older to use this service.")
+    }
+  }
+
+  // Prevent escape key from closing the modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showAgeVerification) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [showAgeVerification])
+
   const handleProceedToPayment = () => {
     if (totalCost > 0) {
       setShowPayPal(true)
@@ -385,16 +412,65 @@ export default function ServiceCheckoutForm() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
-          <p className="text-gray-300 text-center mt-2">
-            TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: 996-238 8338
-          </p>
-        </div>
-      </header>
+    <>
+      {/* Age Verification Modal */}
+      <Dialog open={showAgeVerification} onOpenChange={() => {}}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-md [&>button]:hidden" onPointerDownOutside={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              <AlertTriangle className="w-6 h-6" />
+              Age Verification Required
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="bg-yellow-900 border border-yellow-400 rounded-lg p-4 mb-4">
+                <h3 className="text-yellow-400 font-bold text-lg mb-2">⚠️ Age Restriction</h3>
+                <p className="text-gray-300">
+                  You must be 18 years or older to access ENGEL-TRANS services.
+                </p>
+              </div>
+              <p className="text-gray-400 text-sm">
+                By clicking "I am 18 or older", you confirm that you meet the age requirement to use our transport services.
+              </p>
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={() => handleAgeVerification(true)}
+                className="flex-1 bg-yellow-400 text-black hover:bg-yellow-500 font-bold"
+              >
+                ✅ I am 18 or older
+              </Button>
+              <Button
+                onClick={() => handleAgeVerification(false)}
+                variant="outline"
+                className="flex-1 border-red-400 text-red-400 hover:bg-red-900 hover:text-red-300"
+              >
+                ❌ I am under 18
+              </Button>
+            </div>
+            
+            <div className="text-center text-xs text-gray-500 pt-2">
+              <p>This verification is required for legal compliance.</p>
+              <p>Contact: +996-238-8338 for assistance</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Main Content - Only shown after age verification */}
+      {ageVerified && (
+        <div className="min-h-screen bg-black text-white">
+          {/* Header */}
+          <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
+            <div className="container mx-auto px-4 py-6">
+              <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
+              <p className="text-gray-300 text-center mt-2">
+                TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: 996-238 8338
+              </p>
+            </div>
+          </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="grid md:grid-cols-2 gap-8">
@@ -973,6 +1049,8 @@ export default function ServiceCheckoutForm() {
           <p className="text-gray-400">© 2024 ENGEL-TRANS. All rights reserved.</p>
         </div>
       </footer>
-    </div>
+        </div>
+      )}
+    </>
   )
 }
