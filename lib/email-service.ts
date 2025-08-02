@@ -254,7 +254,7 @@ const logQuoteToConsole = (data: EmailData) => {
     })
   }
   console.log(`📞 Next Action: Contact customer within 24 hours with detailed quote`)
-  console.log(`📧 Email sent to: transport2023de@gmail.com`)
+  console.log(`📧 Email sent to: app2023trans@gmail.com`)
   console.log(`📧 CC sent to: kashiimalick@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
@@ -282,8 +282,8 @@ const logOrderConfirmationToConsole = (data: PaymentData) => {
   }
   console.log(`📞 Next Action: Contact customer within 24 hours to confirm service details`)
   console.log(`📞 Customer Contact: ${data.phone} | ${data.email}`)
-  console.log(`📧 Email sent to: transport2023de@gmail.com`)
-  console.log(`📧 CC sent to: kashiimalik901@gmail.com`)
+  console.log(`📧 Email sent to: app2023trans@gmail.com`)
+  console.log(`📧 CC sent to: kashiimalick@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
 
@@ -302,8 +302,8 @@ export const sendQuoteEmail = async (data: EmailData) => {
     }
 
     console.log('Starting quote email send process...')
-    console.log('Sending to: transport2023de@gmail.com')
-    console.log('CC to: kashiimalik901@gmail.com')
+    console.log('Sending to: app2023trans@gmail.com')
+    console.log('CC to: kashiimalick@gmail.com')
     const transporter = createTransporter()
     
     // Verify transporter
@@ -313,7 +313,7 @@ export const sendQuoteEmail = async (data: EmailData) => {
          const mailOptions: any = {
        from: process.env.EMAIL_USER,
        to: 'kashiimalick@gmail.com', // Your email address
-       cc: 'transport2023de@gmail.com', // CC to business email
+       cc: 'app2023trans@gmail.com', // CC to business email
        subject: `Transport Quote Request - ${data.customerName} (${data.distance}km)`,
       html: createQuoteEmailHTML(data),
       text: `
@@ -394,7 +394,7 @@ export const sendOrderConfirmationEmail = async (data: PaymentData) => {
     }
 
     console.log('Starting order confirmation email send process...')
-    console.log('Sending to: transport2023de@gmail.com')
+    console.log('Sending to: app2023trans@gmail.com')
     console.log('CC to: kashiimalick@gmail.com')
     const transporter = createTransporter()
     
@@ -405,7 +405,7 @@ export const sendOrderConfirmationEmail = async (data: PaymentData) => {
          const mailOptions: any = {
        from: process.env.EMAIL_USER,
        to: 'kashiimalick@gmail.com', // Your email address
-       cc: 'transport2023de@gmail.com', // CC to business email
+       cc: 'app2023trans@gmail.com', // CC to business email
        subject: `✅ Order Confirmed - ${data.customerName} (Order #${data.orderId})`,
       html: createOrderConfirmationHTML(data),
       text: `

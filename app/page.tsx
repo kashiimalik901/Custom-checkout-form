@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X, Calendar as CalendarIcon, Clock, AlertTriangle } from "lucide-react"
+import { MapPin, Calculator, CreditCard, Mail, Phone, User, Search, Upload, X, Calendar as CalendarIcon, Clock, AlertTriangle, FileText } from "lucide-react"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { toast } from "sonner"
 import { format } from "date-fns"
@@ -33,6 +33,7 @@ interface PlaceSuggestion {
 export default function ServiceCheckoutForm() {
   const [ageVerified, setAgeVerified] = useState(false)
   const [showAgeVerification, setShowAgeVerification] = useState(true)
+  const [showImpressum, setShowImpressum] = useState(false)
   
   const [formData, setFormData] = useState({
     customerName: "",
@@ -453,7 +454,42 @@ export default function ServiceCheckoutForm() {
             
             <div className="text-center text-xs text-gray-500 pt-2">
               <p>Diese Verifikation ist für die rechtliche Compliance erforderlich.</p>
-              <p>Kontakt: +996-238-8338 für Unterstützung</p>
+              <p>Kontakt: +49 152 13550785 für Unterstützung</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Impressum Modal */}
+      <Dialog open={showImpressum} onOpenChange={setShowImpressum}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              <FileText className="w-6 h-6" />
+              Impressum
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <p>
+              Dieses Impressum gilt für alle Angebote unter der Domain www.engel-trans.de inklusive aller Subdomains (Unterseiten).
+            </p>
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <h3 className="text-yellow-400 font-medium mb-3">Angaben gemäß § 5 TMG</h3>
+              <div className="space-y-2">
+                <p><strong>Geschäftsführer:</strong> Tin Matijasevic</p>
+                <p><strong>Unternehmen:</strong> Transport & Online Handel</p>
+                <p><strong>Adresse:</strong> Ostenstr. 6 68794</p>
+                <p><strong>Telefon:</strong> +49 152 13550785</p>
+                <p><strong>E-Mail:</strong> app2023trans@gmail.com</p>
+              </div>
+            </div>
+            <div className="text-center pt-4">
+              <Button 
+                onClick={() => setShowImpressum(false)}
+                className="bg-yellow-400 text-black hover:bg-yellow-500"
+              >
+                Schließen
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -467,7 +503,7 @@ export default function ServiceCheckoutForm() {
             <div className="container mx-auto px-4 py-6">
                         <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
           <p className="text-gray-300 text-center mt-2">
-            ABSCHLEPPEN UND TRANSPORT VON AUTOS/LKW 5T – KONTAKT: 996-238 8338
+            ABSCHLEPPEN UND TRANSPORT VON AUTOS/LKW 5T – KONTAKT: +49 152 13550785
           </p>
             </div>
           </header>
@@ -1031,11 +1067,11 @@ export default function ServiceCheckoutForm() {
             <div className="grid md:grid-cols-2 gap-4 text-white">
               <div>
                 <p className="font-medium">E-Mail-Support:</p>
-                <p className="text-yellow-400">transport2023de@gmail.com</p>
+                <p className="text-yellow-400">app2023trans@gmail.com</p>
               </div>
               <div>
                 <p className="font-medium">Telefon-Support:</p>
-                <p className="text-yellow-400">+996-238-8338</p>
+                <p className="text-yellow-400">+49 152 13550785</p>
               </div>
             </div>
             <p className="text-gray-400 mt-4 text-sm">Geschäftszeiten: Montag - Freitag, 9:00 - 18:00 Uhr</p>
@@ -1045,8 +1081,26 @@ export default function ServiceCheckoutForm() {
 
       {/* Footer */}
       <footer className="bg-black border-t-2 border-yellow-400 mt-12">
-        <div className="container mx-auto px-4 py-6 text-center">
-          <p className="text-gray-400">© 2024 ENGEL-TRANS. Alle Rechte vorbehalten.</p>
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center mb-6">
+            <p className="text-gray-400">© 2024 ENGEL-TRANS. Alle Rechte vorbehalten.</p>
+          </div>
+          
+          {/* Legal Links */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <a href="#" className="text-yellow-400 hover:text-yellow-300 transition-colors">
+              AGB
+            </a>
+            <a href="#" className="text-yellow-400 hover:text-yellow-300 transition-colors">
+              Datenschutz
+            </a>
+            <button 
+              onClick={() => setShowImpressum(true)}
+              className="text-yellow-400 hover:text-yellow-300 transition-colors"
+            >
+              Impressum
+            </button>
+          </div>
         </div>
       </footer>
         </div>
