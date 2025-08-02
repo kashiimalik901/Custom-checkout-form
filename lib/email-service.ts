@@ -47,10 +47,10 @@ const createTransporter = () => {
 // Format services for email
 const formatServices = (selectedServices: string[]) => {
   const serviceMap = {
-    'towing-germany': 'Towing within Germany (€60 base + €1/km)',
-    'towing-outside': 'Towing outside Germany (€100 base + €0.80/km)',
-    'moving': 'Moving services (€1.50/km)',
-    'vehicle-transfer': 'Vehicle transfer (€1.50/km)',
+    'towing-germany': 'Abschleppen innerhalb Deutschlands (€60 Grundgebühr + €1/km)',
+    'towing-outside': 'Abschleppen außerhalb Deutschlands (€100 Grundgebühr + €0.80/km)',
+    'moving': 'Umzugsservice (€1.50/km)',
+    'vehicle-transfer': 'Fahrzeugtransport (€1.50/km)',
   }
 
   return selectedServices.map(serviceId => serviceMap[serviceId as keyof typeof serviceMap] || serviceId)
@@ -66,7 +66,7 @@ const createQuoteEmailHTML = (data: EmailData) => {
     <html>
     <head>
       <meta charset="utf-8">
-      <title>New Quote Request - ENGEL-TRANS</title>
+      <title>Neue Angebotsanfrage - ENGEL-TRANS</title>
       <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -81,32 +81,32 @@ const createQuoteEmailHTML = (data: EmailData) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>📋 New Quote Request</h1>
-          <p><strong>Received:</strong> ${new Date().toLocaleString('de-DE')}</p>
+          <h1>📋 Neue Angebotsanfrage</h1>
+          <p><strong>Eingegangen:</strong> ${new Date().toLocaleString('de-DE')}</p>
         </div>
 
         <div class="priority">
-          <p><strong>⚠️ Action Required:</strong> Customer is requesting a detailed quote</p>
+          <p><strong>⚠️ Aktion erforderlich:</strong> Kunde fordert ein detailliertes Angebot an</p>
         </div>
 
         <div class="section">
-          <h2>👤 Customer Information</h2>
+          <h2>👤 Kundeninformationen</h2>
           <p><strong>Name:</strong> ${data.customerName}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Phone:</strong> ${data.phone}</p>
-          ${data.bookingDate ? `<p><strong>Preferred Date:</strong> ${data.bookingDate}</p>` : ''}
-          ${data.bookingTime ? `<p><strong>Preferred Time:</strong> ${data.bookingTime}</p>` : ''}
+          <p><strong>E-Mail:</strong> ${data.email}</p>
+          <p><strong>Telefon:</strong> ${data.phone}</p>
+          ${data.bookingDate ? `<p><strong>Gewünschtes Datum:</strong> ${data.bookingDate}</p>` : ''}
+          ${data.bookingTime ? `<p><strong>Gewünschte Uhrzeit:</strong> ${data.bookingTime}</p>` : ''}
         </div>
 
         <div class="section">
-          <h2>📍 Route Details</h2>
-          <p><strong>From:</strong> ${data.startAddress}</p>
-          <p><strong>To:</strong> ${data.endAddress}</p>
-          <p><strong>Distance:</strong> ${data.distance} km</p>
+          <h2>📍 Routendetails</h2>
+          <p><strong>Von:</strong> ${data.startAddress}</p>
+          <p><strong>Nach:</strong> ${data.endAddress}</p>
+          <p><strong>Entfernung:</strong> ${data.distance} km</p>
         </div>
 
         <div class="section">
-          <h2>🛠️ Requested Services</h2>
+          <h2>🛠️ Angefragte Dienstleistungen</h2>
           <ul>
             ${servicesList}
           </ul>
@@ -114,20 +114,20 @@ const createQuoteEmailHTML = (data: EmailData) => {
 
         ${data.additionalNotes ? `
         <div class="section">
-          <h2>📝 Customer Notes</h2>
+          <h2>📝 Kundennotizen</h2>
           <p>${data.additionalNotes}</p>
         </div>
         ` : ''}
 
         <div class="section">
-          <h2>💰 Estimated Revenue</h2>
-          <p class="total">Potential Revenue (including 19% VAT): ${totalCost}</p>
+          <h2>💰 Geschätzte Einnahmen</h2>
+          <p class="total">Potenzielle Einnahmen (inklusive 19% MwSt): ${totalCost}</p>
         </div>
 
         <div class="footer">
-          <p><strong>Service Area:</strong> Germany, Austria, Slovenia, Croatia</p>
-          <p><strong>All prices include 19% German VAT</strong></p>
-          <p><strong>Next Action:</strong> Contact customer within 24 hours with detailed quote</p>
+          <p><strong>Servicebereich:</strong> Deutschland, Österreich, Slowenien, Kroatien</p>
+          <p><strong>Alle Preise inklusive 19% deutscher MwSt</strong></p>
+          <p><strong>Nächste Aktion:</strong> Kontaktieren Sie den Kunden innerhalb von 24 Stunden mit einem detaillierten Angebot</p>
         </div>
       </div>
     </body>
@@ -145,7 +145,7 @@ const createOrderConfirmationHTML = (data: PaymentData) => {
     <html>
     <head>
       <meta charset="utf-8">
-      <title>New Order Confirmed - ENGEL-TRANS</title>
+      <title>Neue Bestellung bestätigt - ENGEL-TRANS</title>
       <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -162,41 +162,41 @@ const createOrderConfirmationHTML = (data: PaymentData) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>✅ New Order Confirmed</h1>
-          <p><strong>Order Date:</strong> ${new Date().toLocaleString('de-DE')}</p>
-          <p><strong>Order ID:</strong> ${data.orderId}</p>
+          <h1>✅ Neue Bestellung bestätigt</h1>
+          <p><strong>Bestelldatum:</strong> ${new Date().toLocaleString('de-DE')}</p>
+          <p><strong>Bestell-ID:</strong> ${data.orderId}</p>
         </div>
 
         <div class="priority">
-          <p><strong>🎯 Action Required:</strong> Schedule service and contact customer</p>
+          <p><strong>🎯 Aktion erforderlich:</strong> Service planen und Kunde kontaktieren</p>
         </div>
 
         <div class="payment-section">
-          <h2>💳 Payment Received</h2>
-          <p><strong>Status:</strong> <span class="status">PAID</span></p>
-          <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
-          <p><strong>Payment Method:</strong> PayPal</p>
-          <p><strong>Amount Received:</strong> <span class="total">${totalCost}</span></p>
+          <h2>💳 Zahlung erhalten</h2>
+          <p><strong>Status:</strong> <span class="status">BEZAHLT</span></p>
+          <p><strong>Transaktions-ID:</strong> ${data.transactionId}</p>
+          <p><strong>Zahlungsmethode:</strong> PayPal</p>
+          <p><strong>Erhaltener Betrag:</strong> <span class="total">${totalCost}</span></p>
         </div>
 
         <div class="section">
-          <h2>👤 Customer Information</h2>
+          <h2>👤 Kundeninformationen</h2>
           <p><strong>Name:</strong> ${data.customerName}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Phone:</strong> ${data.phone}</p>
-          ${data.bookingDate ? `<p><strong>Preferred Date:</strong> ${data.bookingDate}</p>` : ''}
-          ${data.bookingTime ? `<p><strong>Preferred Time:</strong> ${data.bookingTime}</p>` : ''}
+          <p><strong>E-Mail:</strong> ${data.email}</p>
+          <p><strong>Telefon:</strong> ${data.phone}</p>
+          ${data.bookingDate ? `<p><strong>Gewünschtes Datum:</strong> ${data.bookingDate}</p>` : ''}
+          ${data.bookingTime ? `<p><strong>Gewünschte Uhrzeit:</strong> ${data.bookingTime}</p>` : ''}
         </div>
 
         <div class="section">
-          <h2>📍 Route Details</h2>
-          <p><strong>From:</strong> ${data.startAddress}</p>
-          <p><strong>To:</strong> ${data.endAddress}</p>
-          <p><strong>Distance:</strong> ${data.distance} km</p>
+          <h2>📍 Routendetails</h2>
+          <p><strong>Von:</strong> ${data.startAddress}</p>
+          <p><strong>Nach:</strong> ${data.endAddress}</p>
+          <p><strong>Entfernung:</strong> ${data.distance} km</p>
         </div>
 
         <div class="section">
-          <h2>🛠️ Booked Services</h2>
+          <h2>🛠️ Gebuchte Dienstleistungen</h2>
           <ul>
             ${servicesList}
           </ul>
@@ -204,21 +204,21 @@ const createOrderConfirmationHTML = (data: PaymentData) => {
 
         ${data.additionalNotes ? `
         <div class="section">
-          <h2>📝 Customer Notes</h2>
+          <h2>📝 Kundennotizen</h2>
           <p>${data.additionalNotes}</p>
         </div>
         ` : ''}
 
         <div class="section">
-          <h2>📞 Contact Customer</h2>
-          <p><strong>Next Action:</strong> Contact customer within 24 hours to confirm service details</p>
-          <p><strong>Customer Contact:</strong> ${data.phone} | ${data.email}</p>
+          <h2>📞 Kunde kontaktieren</h2>
+          <p><strong>Nächste Aktion:</strong> Kontaktieren Sie den Kunden innerhalb von 24 Stunden, um Servicedetails zu bestätigen</p>
+          <p><strong>Kundenkontakt:</strong> ${data.phone} | ${data.email}</p>
         </div>
 
         <div class="footer">
-          <p><strong>Service Area:</strong> Germany, Austria, Slovenia, Croatia</p>
-          <p><strong>Revenue Generated:</strong> €${data.totalCost?.toFixed(2) || '0.00'}</p>
-          <p><strong>Order Status:</strong> Payment confirmed, awaiting service scheduling</p>
+          <p><strong>Servicebereich:</strong> Deutschland, Österreich, Slowenien, Kroatien</p>
+          <p><strong>Generierte Einnahmen:</strong> €${data.totalCost?.toFixed(2) || '0.00'}</p>
+          <p><strong>Bestellstatus:</strong> Zahlung bestätigt, wartend auf Serviceplanung</p>
         </div>
       </div>
     </body>

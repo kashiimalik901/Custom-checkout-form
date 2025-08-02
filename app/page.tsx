@@ -18,10 +18,10 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 
 const services = [
-  { id: "towing-germany", name: "Towing within Germany", baseFee: 60, pricePerKm: 1.0, description: "€60 base fee + €1 per km" },
-  { id: "towing-outside", name: "Towing outside Germany", baseFee: 100, pricePerKm: 0.8, description: "€100 base fee + €0.80 per km" },
-  { id: "moving", name: "Moving services", baseFee: 0, pricePerKm: 1.5, description: "€1.50 per km (no base fee)" },
-  { id: "vehicle-transfer", name: "Vehicle transfer", baseFee: 0, pricePerKm: 1.5, description: "€1.50 per km (no base fee)" },
+  { id: "towing-germany", name: "Abschleppen innerhalb Deutschlands", baseFee: 60, pricePerKm: 1.0, description: "€60 Grundgebühr + €1 pro km" },
+  { id: "towing-outside", name: "Abschleppen außerhalb Deutschlands", baseFee: 100, pricePerKm: 0.8, description: "€100 Grundgebühr + €0.80 pro km" },
+  { id: "moving", name: "Umzugsservice", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
+  { id: "vehicle-transfer", name: "Fahrzeugtransport", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
 ]
 
 interface PlaceSuggestion {
@@ -366,9 +366,9 @@ export default function ServiceCheckoutForm() {
     if (confirmed) {
       setAgeVerified(true)
       setShowAgeVerification(false)
-      toast.success("Age verification completed. Welcome to ENGEL-TRANS!")
+      toast.success("Altersverifikation abgeschlossen. Willkommen bei ENGEL-TRANS!")
     } else {
-      toast.error("You must be 18 or older to use this service.")
+      toast.error("Sie müssen mindestens 18 Jahre alt sein, um diesen Service zu nutzen.")
     }
   }
 
@@ -419,19 +419,19 @@ export default function ServiceCheckoutForm() {
           <DialogHeader>
             <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
               <AlertTriangle className="w-6 h-6" />
-              Age Verification Required
+              Altersverifikation erforderlich
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="text-center">
               <div className="bg-yellow-900 border border-yellow-400 rounded-lg p-4 mb-4">
-                <h3 className="text-yellow-400 font-bold text-lg mb-2">⚠️ Age Restriction</h3>
+                <h3 className="text-yellow-400 font-bold text-lg mb-2">⚠️ Altersbeschränkung</h3>
                 <p className="text-gray-300">
-                  You must be 18 years or older to access ENGEL-TRANS services.
+                  Sie müssen mindestens 18 Jahre alt sein, um ENGEL-TRANS-Dienstleistungen zu nutzen.
                 </p>
               </div>
               <p className="text-gray-400 text-sm">
-                By clicking "I am 18 or older", you confirm that you meet the age requirement to use our transport services.
+                Durch Klicken auf "Ich bin 18 oder älter" bestätigen Sie, dass Sie das Alterserfordernis für die Nutzung unserer Transportdienstleistungen erfüllen.
               </p>
             </div>
             
@@ -440,20 +440,20 @@ export default function ServiceCheckoutForm() {
                 onClick={() => handleAgeVerification(true)}
                 className="flex-1 bg-yellow-400 text-black hover:bg-yellow-500 font-bold"
               >
-                ✅ I am 18 or older
+                ✅ Ich bin 18 oder älter
               </Button>
               <Button
                 onClick={() => handleAgeVerification(false)}
                 variant="outline"
                 className="flex-1 border-red-400 text-red-400 hover:bg-red-900 hover:text-red-300"
               >
-                ❌ I am under 18
+                ❌ Ich bin unter 18
               </Button>
             </div>
             
             <div className="text-center text-xs text-gray-500 pt-2">
-              <p>This verification is required for legal compliance.</p>
-              <p>Contact: +996-238-8338 for assistance</p>
+              <p>Diese Verifikation ist für die rechtliche Compliance erforderlich.</p>
+              <p>Kontakt: +996-238-8338 für Unterstützung</p>
             </div>
           </div>
         </DialogContent>
@@ -465,10 +465,10 @@ export default function ServiceCheckoutForm() {
           {/* Header */}
           <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
             <div className="container mx-auto px-4 py-6">
-              <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
-              <p className="text-gray-300 text-center mt-2">
-                TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: 996-238 8338
-              </p>
+                        <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
+          <p className="text-gray-300 text-center mt-2">
+            ABSCHLEPPEN UND TRANSPORT VON AUTOS/LKW 5T – KONTAKT: 996-238 8338
+          </p>
             </div>
           </header>
 
@@ -477,28 +477,28 @@ export default function ServiceCheckoutForm() {
           {/* Customer Information */}
           <Card className="bg-gray-900 border-yellow-400 border-2">
             <CardHeader>
-              <CardTitle className="text-yellow-400 flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Customer Information
-              </CardTitle>
+                          <CardTitle className="text-yellow-400 flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Kundeninformationen
+            </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="customerName" className="text-white">
-                  Full Name *
+                  Vollständiger Name *
                 </Label>
                 <Input
                   id="customerName"
                   value={formData.customerName}
                   onChange={(e) => setFormData((prev) => ({ ...prev, customerName: e.target.value }))}
                   className="bg-black border-gray-600 text-white focus:border-yellow-400"
-                  placeholder="Enter your full name"
+                  placeholder="Geben Sie Ihren vollständigen Namen ein"
                 />
               </div>
 
               <div>
                 <Label htmlFor="email" className="text-white">
-                  Email Address *
+                  E-Mail-Adresse *
                 </Label>
                 <Input
                   id="email"
@@ -506,27 +506,27 @@ export default function ServiceCheckoutForm() {
                   value={formData.email}
                   onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                   className="bg-black border-gray-600 text-white focus:border-yellow-400"
-                  placeholder="your.email@example.com"
+                  placeholder="ihre.email@beispiel.com"
                 />
               </div>
 
               <div>
                 <Label htmlFor="phone" className="text-white">
-                  Phone Number *
+                  Telefonnummer *
                 </Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
                   className="bg-black border-gray-600 text-white focus:border-yellow-400"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+49 (0) 123 456789"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="bookingDate" className="text-white">
-                    Preferred Date *
+                    Gewünschtes Datum *
                   </Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -538,7 +538,7 @@ export default function ServiceCheckoutForm() {
                         {formData.bookingDate ? (
                           format(formData.bookingDate, "PPP")
                         ) : (
-                          <span className="text-gray-400">Pick a date</span>
+                          <span className="text-gray-400">Datum auswählen</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -557,7 +557,7 @@ export default function ServiceCheckoutForm() {
 
                 <div>
                   <Label htmlFor="bookingTime" className="text-white">
-                    Preferred Time *
+                    Gewünschte Uhrzeit *
                   </Label>
                   <Input
                     id="bookingTime"
@@ -565,7 +565,7 @@ export default function ServiceCheckoutForm() {
                     value={formData.bookingTime}
                     onChange={(e) => setFormData((prev) => ({ ...prev, bookingTime: e.target.value }))}
                     className="bg-black border-gray-600 text-white focus:border-yellow-400"
-                    placeholder="Select time"
+                    placeholder="Uhrzeit auswählen"
                   />
                 </div>
               </div>
@@ -575,15 +575,15 @@ export default function ServiceCheckoutForm() {
           {/* Trip Details */}
           <Card className="bg-gray-900 border-yellow-400 border-2">
             <CardHeader>
-              <CardTitle className="text-yellow-400 flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                Trip Details
-              </CardTitle>
+                          <CardTitle className="text-yellow-400 flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
+              Fahrtdetails
+            </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="autocomplete-container relative">
                 <Label htmlFor="pickupAddress" className="text-white">
-                  Pickup Address *
+                  Abholadresse *
                 </Label>
                 <div className="relative">
                   <Input
@@ -591,7 +591,7 @@ export default function ServiceCheckoutForm() {
                     value={formData.startAddress}
                     onChange={(e) => handlePickupChange(e.target.value)}
                     className="bg-black border-gray-600 text-white focus:border-yellow-400 mt-2 pr-10"
-                    placeholder="Enter pickup address..."
+                    placeholder="Abholadresse eingeben..."
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     {isSearchingPickup ? (
@@ -618,12 +618,12 @@ export default function ServiceCheckoutForm() {
                   </div>
                 )}
 
-                <p className="text-sm text-gray-400 mt-1">Start typing to see address suggestions in Germany, Austria, Slovenia, and Croatia</p>
+                <p className="text-sm text-gray-400 mt-1">Beginnen Sie mit der Eingabe, um Adressvorschläge in Deutschland, Österreich, Slowenien und Kroatien zu sehen</p>
               </div>
 
               <div className="autocomplete-container relative">
                 <Label htmlFor="destinationAddress" className="text-white">
-                  Destination Address *
+                  Zieladresse *
                 </Label>
                 <div className="relative">
                   <Input
@@ -631,7 +631,7 @@ export default function ServiceCheckoutForm() {
                     value={formData.endAddress}
                     onChange={(e) => handleDestinationChange(e.target.value)}
                     className="bg-black border-gray-600 text-white focus:border-yellow-400 mt-2 pr-10"
-                    placeholder="Enter destination address..."
+                    placeholder="Zieladresse eingeben..."
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     {isSearchingDestination ? (
@@ -658,19 +658,19 @@ export default function ServiceCheckoutForm() {
                   </div>
                 )}
 
-                <p className="text-sm text-gray-400 mt-1">Start typing to see address suggestions in Germany, Austria, Slovenia, and Croatia</p>
+                <p className="text-sm text-gray-400 mt-1">Beginnen Sie mit der Eingabe, um Adressvorschläge in Deutschland, Österreich, Slowenien und Kroatien zu sehen</p>
               </div>
 
               <div>
-                <Label className="text-white">Distance</Label>
+                <Label className="text-white">Entfernung</Label>
                 <div className="relative">
                   <Input
                     value={
                       isCalculatingDistance
-                        ? "Calculating..."
+                        ? "Berechne..."
                         : formData.distance > 0
                           ? `${formData.distance} km`
-                          : "Select both addresses to calculate"
+                          : "Wählen Sie beide Adressen zur Berechnung"
                     }
                     readOnly
                     className="bg-gray-800 border-gray-600 text-gray-300 cursor-not-allowed"
@@ -681,7 +681,7 @@ export default function ServiceCheckoutForm() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-gray-400 mt-1">Distance calculated automatically via Google Routes API</p>
+                <p className="text-sm text-gray-400 mt-1">Entfernung wird automatisch über Google Routes API berechnet</p>
               </div>
 
 
@@ -692,8 +692,8 @@ export default function ServiceCheckoutForm() {
         {/* Service Selection */}
         <Card className="bg-gray-900 border-yellow-400 border-2 mt-8">
                       <CardHeader>
-              <CardTitle className="text-yellow-400">Select Services</CardTitle>
-              <p className="text-gray-300">Choose the services you need. All prices include 19% VAT (German tax rate).</p>
+              <CardTitle className="text-yellow-400">Dienstleistungen auswählen</CardTitle>
+              <p className="text-gray-300">Wählen Sie die benötigten Dienstleistungen. Alle Preise inklusive 19% MwSt (deutscher Steuersatz).</p>
             </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -723,19 +723,19 @@ export default function ServiceCheckoutForm() {
         {/* Additional Notes */}
         <Card className="bg-gray-900 border-yellow-400 border-2 mt-8">
           <CardHeader>
-            <CardTitle className="text-yellow-400">Additional Information</CardTitle>
+            <CardTitle className="text-yellow-400">Zusätzliche Informationen</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="additionalNotes" className="text-white">
-                Special Instructions or Notes
+                Besondere Anweisungen oder Notizen
               </Label>
               <Textarea
                 id="additionalNotes"
                 value={formData.additionalNotes}
                 onChange={(e) => setFormData((prev) => ({ ...prev, additionalNotes: e.target.value }))}
                 className="bg-black border-gray-600 text-white focus:border-yellow-400 mt-2"
-                placeholder="Any special requirements, fragile items, time preferences, etc."
+                placeholder="Besondere Anforderungen, zerbrechliche Gegenstände, Zeitpräferenzen, etc."
                 rows={3}
               />
             </div>
@@ -746,7 +746,7 @@ export default function ServiceCheckoutForm() {
                 Attach Files (Optional)
               </Label>
               <p className="text-sm text-gray-400 mb-2">
-                Upload photos of your vehicle, documents, or other relevant files (Max 10MB each)
+                Laden Sie Fotos Ihres Fahrzeugs, Dokumente oder andere relevante Dateien hoch (Max. 10MB pro Datei)
               </p>
               
               <div className="space-y-3">
@@ -757,7 +757,7 @@ export default function ServiceCheckoutForm() {
                   className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black bg-transparent"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  Choose Files
+                  Dateien auswählen
                 </Button>
                 
                 <input
@@ -772,7 +772,7 @@ export default function ServiceCheckoutForm() {
                 {/* File List */}
                 {attachedFiles.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-300">Attached Files:</p>
+                    <p className="text-sm text-gray-300">Angehängte Dateien:</p>
                     {attachedFiles.map((file, index) => (
                       <div key={index} className="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
                         <div className="flex items-center space-x-2">
@@ -805,7 +805,7 @@ export default function ServiceCheckoutForm() {
           <CardHeader>
             <CardTitle className="text-yellow-400 flex items-center gap-2">
               <Calculator className="w-5 h-5" />
-              Cost Calculation & Payment
+              Kostenberechnung & Zahlung
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -819,12 +819,12 @@ export default function ServiceCheckoutForm() {
                 {isRequestingEstimate ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400 mr-2"></div>
-                    Sending Request...
+                    Anfrage wird gesendet...
                   </>
                 ) : (
                   <>
                     <Mail className="w-4 h-4 mr-2" />
-                    Request Detailed Estimate
+                    Detailliertes Angebot anfordern
                   </>
                 )}
               </Button>
@@ -840,12 +840,12 @@ export default function ServiceCheckoutForm() {
                     </span>
                   </div>
                   <div className="flex justify-between text-white">
-                    <span>Distance:</span>
+                    <span>Entfernung:</span>
                     <span>{formData.distance} km</span>
                   </div>
                   <div className="flex justify-between text-white">
-                    <span>Selected Services:</span>
-                    <span>{formData.selectedServices.length} service(s)</span>
+                    <span>Ausgewählte Dienstleistungen:</span>
+                    <span>{formData.selectedServices.length} Dienstleistung(en)</span>
                   </div>
                   <div className="text-sm text-gray-400">
                     {formData.selectedServices.map((serviceId) => {
@@ -862,10 +862,10 @@ export default function ServiceCheckoutForm() {
                     })}
                   </div>
                   <div className="border-t border-gray-600 pt-2">
-                    <div className="flex justify-between text-xl font-bold text-yellow-400">
-                      <span>Total Cost:</span>
-                      <span>€{totalCost.toFixed(2)}</span>
-                    </div>
+                                      <div className="flex justify-between text-xl font-bold text-yellow-400">
+                    <span>Gesamtkosten:</span>
+                    <span>€{totalCost.toFixed(2)}</span>
+                  </div>
                   </div>
                 </div>
 
@@ -876,7 +876,7 @@ export default function ServiceCheckoutForm() {
                     disabled={!formData.customerName || !formData.email || !formData.phone}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Proceed to PayPal Payment
+                    Zur PayPal-Zahlung
                   </Button>
 
                   {showPayPal && (
@@ -1004,7 +1004,7 @@ export default function ServiceCheckoutForm() {
             {formData.distance === 0 && formData.selectedServices.length > 0 && (
               <div className="bg-blue-900 border border-blue-400 p-4 rounded-lg">
                 <p className="text-blue-400">
-                  Please select both pickup and destination addresses to calculate the total cost.
+                  Bitte wählen Sie sowohl Abhol- als auch Zieladresse aus, um die Gesamtkosten zu berechnen.
                 </p>
               </div>
             )}
@@ -1012,7 +1012,7 @@ export default function ServiceCheckoutForm() {
             {formData.estimateRequested && (
               <div className="bg-green-900 border border-green-400 p-4 rounded-lg">
                 <p className="text-green-400 font-medium">
-                  ✓ Estimate request sent successfully! You will receive a detailed quote within 24 hours.
+                  ✓ Angebotsanfrage erfolgreich gesendet! Sie erhalten ein detailliertes Angebot innerhalb von 24 Stunden.
                 </p>
               </div>
             )}
@@ -1024,21 +1024,21 @@ export default function ServiceCheckoutForm() {
           <CardHeader>
             <CardTitle className="text-yellow-400 flex items-center gap-2">
               <Phone className="w-5 h-5" />
-              Need Help?
+              Hilfe benötigt?
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4 text-white">
               <div>
-                <p className="font-medium">Email Support:</p>
+                <p className="font-medium">E-Mail-Support:</p>
                 <p className="text-yellow-400">transport2023de@gmail.com</p>
               </div>
               <div>
-                <p className="font-medium">Phone Support:</p>
+                <p className="font-medium">Telefon-Support:</p>
                 <p className="text-yellow-400">+996-238-8338</p>
               </div>
             </div>
-            <p className="text-gray-400 mt-4 text-sm">Business hours: Monday - Friday, 9:00 AM - 6:00 PM</p>
+            <p className="text-gray-400 mt-4 text-sm">Geschäftszeiten: Montag - Freitag, 9:00 - 18:00 Uhr</p>
           </CardContent>
         </Card>
       </div>
@@ -1046,7 +1046,7 @@ export default function ServiceCheckoutForm() {
       {/* Footer */}
       <footer className="bg-black border-t-2 border-yellow-400 mt-12">
         <div className="container mx-auto px-4 py-6 text-center">
-          <p className="text-gray-400">© 2024 ENGEL-TRANS. All rights reserved.</p>
+          <p className="text-gray-400">© 2024 ENGEL-TRANS. Alle Rechte vorbehalten.</p>
         </div>
       </footer>
         </div>
