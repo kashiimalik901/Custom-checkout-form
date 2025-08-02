@@ -51,6 +51,7 @@ const formatServices = (selectedServices: string[]) => {
     'towing-outside': 'Abschleppen außerhalb Deutschlands (€100 Grundgebühr + €0.80/km)',
     'moving': 'Umzugsservice (€1.50/km)',
     'vehicle-transfer': 'Überführung Auf Eigene Achse( mit Tüv oder Ohne Tüv  Versichert) (€1.50/km)',
+    'vip-transfer': 'VIP Transfer - Direktzahlung',
   }
 
   return selectedServices.map(serviceId => serviceMap[serviceId as keyof typeof serviceMap] || serviceId)

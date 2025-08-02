@@ -34,6 +34,9 @@ export default function ServiceCheckoutForm() {
   const [ageVerified, setAgeVerified] = useState(false)
   const [showAgeVerification, setShowAgeVerification] = useState(true)
   const [showImpressum, setShowImpressum] = useState(false)
+  const [showVipTransfer, setShowVipTransfer] = useState(false)
+  const [vipAmount, setVipAmount] = useState("")
+  const [isVipTransfer, setIsVipTransfer] = useState(false)
   
   const [formData, setFormData] = useState({
     customerName: "",
@@ -495,6 +498,97 @@ export default function ServiceCheckoutForm() {
         </DialogContent>
       </Dialog>
 
+      {/* VIP Transfer Modal */}
+      <Dialog open={showVipTransfer} onOpenChange={setShowVipTransfer}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              🚀 VIP Transfer
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="bg-yellow-900 border border-yellow-400 rounded-lg p-4 mb-4">
+                <h3 className="text-yellow-400 font-bold text-lg mb-2">💎 VIP Direktzahlung</h3>
+                <p className="text-gray-300 text-sm">
+                  Schnelle Zahlung ohne Formular - nur Betrag eingeben und bezahlen!
+                </p>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <Label htmlFor="vipAmount" className="text-white">
+                Betrag (EUR) *
+              </Label>
+              <Input
+                id="vipAmount"
+                type="number"
+                value={vipAmount}
+                onChange={(e) => setVipAmount(e.target.value)}
+                className="bg-black border-gray-600 text-white focus:border-yellow-400"
+                placeholder="z.B. 50"
+                min="1"
+                step="0.01"
+              />
+              <p className="text-gray-400 text-xs">
+                Geben Sie den gewünschten Betrag in Euro ein
+              </p>
+            </div>
+
+            {vipAmount && parseFloat(vipAmount) > 0 && (
+              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                <h4 className="text-yellow-400 font-medium mb-2">Zahlungsübersicht</h4>
+                <div className="space-y-1 text-sm">
+                  <p><strong>Betrag:</strong> €{parseFloat(vipAmount).toFixed(2)}</p>
+                  <p><strong>MwSt (19%):</strong> €{(parseFloat(vipAmount) * 0.19).toFixed(2)}</p>
+                  <p className="text-lg font-bold text-yellow-400">
+                    <strong>Gesamtbetrag:</strong> €{(parseFloat(vipAmount) * 1.19).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={() => setShowVipTransfer(false)}
+                variant="outline"
+                className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                Abbrechen
+              </Button>
+              <Button
+                onClick={() => {
+                  if (vipAmount && parseFloat(vipAmount) > 0) {
+                    setShowVipTransfer(false)
+                    setShowPayPal(true)
+                    setTotalCost(parseFloat(vipAmount) * 1.19)
+                    setIsVipTransfer(true)
+                    toast.success("VIP Transfer vorbereitet - PayPal wird geöffnet")
+                    
+                    // Auto scroll to PayPal section after a short delay
+                    setTimeout(() => {
+                      const paypalSection = document.getElementById('paypal-section')
+                      if (paypalSection) {
+                        paypalSection.scrollIntoView({ 
+                          behavior: 'smooth', 
+                          block: 'center' 
+                        })
+                      }
+                    }, 500)
+                  } else {
+                    toast.error("Bitte geben Sie einen gültigen Betrag ein")
+                  }
+                }}
+                className="flex-1 bg-yellow-400 text-black hover:bg-yellow-500 font-bold"
+                disabled={!vipAmount || parseFloat(vipAmount) <= 0}
+              >
+                💳 Mit PayPal bezahlen
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Main Content - Only shown after age verification */}
       {ageVerified && (
         <div className="min-h-screen bg-black text-white">
@@ -505,6 +599,14 @@ export default function ServiceCheckoutForm() {
           <p className="text-gray-300 text-center mt-2">
             ABSCHLEPPEN UND TRANSPORT VON AUTOS/LKW 5T – KONTAKT: +49 152 13550785
           </p>
+          <div className="text-center mt-4">
+            <Button
+              onClick={() => setShowVipTransfer(true)}
+              className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold px-6 py-2"
+            >
+              🚀 VIP Transfer - Direktzahlung
+            </Button>
+          </div>
             </div>
           </header>
 
@@ -909,14 +1011,14 @@ export default function ServiceCheckoutForm() {
                   <Button
                     onClick={handleProceedToPayment}
                     className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-bold py-3"
-                    disabled={!formData.customerName || !formData.email || !formData.phone}
+                    disabled={!isVipTransfer && (!formData.customerName || !formData.email || !formData.phone)}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Zur PayPal-Zahlung
+                    {isVipTransfer ? "🚀 VIP Transfer bezahlen" : "Zur PayPal-Zahlung"}
                   </Button>
 
                   {showPayPal && (
-                    <div className="mt-4">
+                    <div id="paypal-section" className="mt-4">
                       {process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID !== "YOUR_PAYPAL_CLIENT_ID" ? (
                         <PayPalScriptProvider options={paypalOptions}>
                           <PayPalButtons
@@ -929,7 +1031,9 @@ export default function ServiceCheckoutForm() {
                                     value: totalCost.toFixed(2),
                                     currency_code: "EUR",
                                   },
-                                  description: `Transport Service - ${formData.distance}km from ${formData.startAddress.split(",")[0]} to ${formData.endAddress.split(",")[0]}`,
+                                  description: isVipTransfer 
+                                    ? `VIP Transfer - €${(totalCost / 1.19).toFixed(2)} + 19% MwSt`
+                                    : `Transport Service - ${formData.distance}km from ${formData.startAddress.split(",")[0]} to ${formData.endAddress.split(",")[0]}`,
                                 },
                               ],
                             })
@@ -947,12 +1051,24 @@ export default function ServiceCheckoutForm() {
                                 },
                                 body: JSON.stringify({
                                   paymentId: details?.id,
-                                  customerInfo: {
+                                  customerInfo: isVipTransfer ? {
+                                    name: "VIP Transfer Customer",
+                                    email: "vip@engel-trans.de",
+                                    phone: "VIP Transfer",
+                                  } : {
                                     name: formData.customerName,
                                     email: formData.email,
                                     phone: formData.phone,
                                   },
-                                  serviceDetails: {
+                                  serviceDetails: isVipTransfer ? {
+                                    bookingDate: null,
+                                    bookingTime: "",
+                                    startAddress: "VIP Transfer",
+                                    endAddress: "VIP Transfer",
+                                    distance: 0,
+                                    services: ["vip-transfer"],
+                                    notes: `VIP Transfer - €${(totalCost / 1.19).toFixed(2)} + 19% MwSt`,
+                                  } : {
                                     bookingDate: formData.bookingDate ? formData.bookingDate.toISOString().split('T')[0] : null,
                                     bookingTime: formData.bookingTime,
                                     startAddress: formData.startAddress,
@@ -997,6 +1113,8 @@ export default function ServiceCheckoutForm() {
                                 setTotalCost(0)
                                 setAttachedFiles([])
                                 setShowPayPal(false)
+                                setIsVipTransfer(false)
+                                setVipAmount("")
                               } else {
                                 toast.error(`Payment processing failed: ${result.message}`)
                               }
@@ -1037,7 +1155,18 @@ export default function ServiceCheckoutForm() {
               </div>
             )}
 
-            {formData.distance === 0 && formData.selectedServices.length > 0 && (
+            {isVipTransfer && (
+              <div className="bg-yellow-900 border border-yellow-400 p-4 rounded-lg">
+                <p className="text-yellow-400 font-medium">
+                  🚀 VIP Transfer aktiv - Betrag: €{(totalCost / 1.19).toFixed(2)} + 19% MwSt = €{totalCost.toFixed(2)}
+                </p>
+                <p className="text-yellow-300 text-sm mt-1">
+                  Keine Kundendaten erforderlich - direkte PayPal-Zahlung
+                </p>
+              </div>
+            )}
+
+            {formData.distance === 0 && formData.selectedServices.length > 0 && !isVipTransfer && (
               <div className="bg-blue-900 border border-blue-400 p-4 rounded-lg">
                 <p className="text-blue-400">
                   Bitte wählen Sie sowohl Abhol- als auch Zieladresse aus, um die Gesamtkosten zu berechnen.
