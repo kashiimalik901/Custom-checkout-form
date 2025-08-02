@@ -21,7 +21,7 @@ const services = [
   { id: "towing-germany", name: "Abschleppen innerhalb Deutschlands", baseFee: 60, pricePerKm: 1.0, description: "€60 Grundgebühr + €1 pro km" },
   { id: "towing-outside", name: "Abschleppen außerhalb Deutschlands", baseFee: 100, pricePerKm: 0.8, description: "€100 Grundgebühr + €0.80 pro km" },
   { id: "moving", name: "Umzugsservice", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
-  { id: "vehicle-transfer", name: "Fahrzeugtransport", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
+  { id: "vehicle-transfer", name: "Überführung Auf Eigene Achse( mit Tüv oder Ohne Tüv  Versichert)", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
 ]
 
 interface PlaceSuggestion {
