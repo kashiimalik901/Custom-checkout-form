@@ -1150,7 +1150,7 @@ export default function ServiceCheckoutForm() {
                       <Button
                         onClick={() => setShowManualPayment(true)}
                         variant="outline"
-                        className="w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black font-bold py-3"
+                        className="w-full border-yellow-400 text-black-400 hover:bg-yellow-400 hover:text-black font-bold py-3"
                         disabled={!formData.customerName || !formData.email || !formData.phone}
                       >
                         🏦 Überweisung (Banküberweisung)
