@@ -34,6 +34,8 @@ export default function ServiceCheckoutForm() {
   const [ageVerified, setAgeVerified] = useState(false)
   const [showAgeVerification, setShowAgeVerification] = useState(true)
   const [showImpressum, setShowImpressum] = useState(false)
+  const [showAgb, setShowAgb] = useState(false)
+  const [showDatenschutz, setShowDatenschutz] = useState(false)
   const [showVipTransfer, setShowVipTransfer] = useState(false)
   const [vipAmount, setVipAmount] = useState("")
   const [isVipTransfer, setIsVipTransfer] = useState(false)
@@ -492,6 +494,252 @@ export default function ServiceCheckoutForm() {
             <div className="text-center pt-4">
               <Button 
                 onClick={() => setShowImpressum(false)}
+                className="bg-yellow-400 text-black hover:bg-yellow-500"
+              >
+                Schließen
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* AGB Modal */}
+      <Dialog open={showAgb} onOpenChange={setShowAgb}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              <FileText className="w-6 h-6" />
+              Allgemeine Geschäftsbedingungen (AGB)
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <p className="text-yellow-400 font-medium">für Transportdienstleistungen innerhalb Deutschlands und der EU</p>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">1. Geltungsbereich</h3>
+                <p>
+                  Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Transportleistungen, die durch transport Online Handel Ostenstr 6 68794 Oberhausen-rheinhausen (nachfolgend „Auftragnehmer") gegenüber Kunden (nachfolgend „Auftraggeber") erbracht werden. Abweichende Bedingungen des Auftraggebers werden nicht anerkannt, es sei denn, der Auftragnehmer stimmt ihrer Geltung ausdrücklich schriftlich zu.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">2. Vertragsgegenstand</h3>
+                <p>
+                  Gegenstand des Vertrages ist die Beförderung von Fahrzeugen, Möbeln und Palettenwaren innerhalb Deutschlands sowie in Länder der Europäischen Union. Sondertransporte (z. B. Gefahrgut, Kühlgut) sind nicht Vertragsbestandteil, sofern nicht ausdrücklich vereinbart.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">3. Vertragsschluss</h3>
+                <p>
+                  Ein Vertrag kommt zustande durch Annahme eines vom Auftragnehmer erstellten Angebots oder durch schriftliche oder mündliche Auftragserteilung des Auftraggebers und entsprechende Bestätigung durch den Auftragnehmer.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">4. Pflichten des Auftraggebers</h3>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Der Auftraggeber ist verpflichtet, vollständige und korrekte Angaben zu Art, Anzahl, Gewicht und Abmessungen der Transportgüter zu machen.</li>
+                  <li>Die Ware muss transportfähig verpackt sein.</li>
+                  <li>Der Auftraggeber trägt die Verantwortung für das Be- und Entladen, sofern nicht anders vereinbart.</li>
+                  <li>Alle für den Transport erforderlichen Genehmigungen, Dokumente oder Hinweise sind rechtzeitig bereitzustellen.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">5. Pflichten des Auftragnehmers</h3>
+                <p>
+                  Der Auftragnehmer verpflichtet sich zur ordnungsgemäßen Durchführung des Transports mit geeigneten Fahrzeugen und unter Beachtung der geltenden gesetzlichen Vorschriften (HGB, CMR bei internationalen Sendungen).
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">6. Lieferzeit und Lieferverzögerung</h3>
+                <p>
+                  Lieferzeiten gelten als annähernd, sofern nicht ausdrücklich verbindlich vereinbart. Der Auftragnehmer haftet nicht für Lieferverzögerungen, die auf höhere Gewalt, Verkehrsbehinderungen oder behördliche Maßnahmen zurückzuführen sind.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">7. Gefahrenübergang</h3>
+                <p>
+                  Die Gefahr des Verlusts oder der Beschädigung der Ware geht mit Übergabe an den Transporteur bzw. bei Abholung durch den Auftragnehmer auf den Auftraggeber über, es sei denn, es wurde etwas anderes schriftlich vereinbart.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">8. Transportschäden</h3>
+                <p>
+                  Der Auftraggeber bzw. Empfänger ist verpflichtet, erkennbare Schäden bei Warenannahme direkt beim Fahrer zu dokumentieren. Verdeckte Schäden sind innerhalb von 7 Kalendertagen schriftlich anzuzeigen. Ansprüche verjähren nach den gesetzlichen Fristen gemäß HGB bzw. CMR.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">9. Preise und Zahlungsbedingungen</h3>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>Die Transportkosten richten sich nach Art, Umfang und Entfernung der Lieferung.</li>
+                  <li>Alle Preise verstehen sich zzgl. gesetzlicher Mehrwertsteuer, sofern nicht anders angegeben.</li>
+                  <li>Rechnungen sind ohne Abzug innerhalb von 7 Tagen nach Zugang zu begleichen, sofern nicht anders vereinbart.</li>
+                  <li>Bei Zahlungsverzug behält sich der Auftragnehmer das Recht vor, Verzugszinsen gemäß § 288 BGB zu berechnen.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">10. Haftung</h3>
+                <p>
+                  Die Haftung des Auftragnehmers richtet sich nach den gesetzlichen Vorschriften, insbesondere den Regelungen des HGB und bei grenzüberschreitenden Transporten nach der CMR. Eine Haftung für entgangenen Gewinn, Betriebsunterbrechung oder indirekte Schäden ist ausgeschlossen, sofern nicht vorsätzlich oder grob fahrlässig gehandelt wurde.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">11. Datenschutz</h3>
+                <p>
+                  Der Auftragnehmer verarbeitet personenbezogene Daten ausschließlich im Rahmen der geltenden Datenschutzgesetze. Näheres ist der Datenschutzerklärung auf der Website des Auftragnehmers zu entnehmen.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">12. Gerichtsstand und anwendbares Recht</h3>
+                <p>
+                  Es gilt deutsches Recht. Gerichtsstand ist – soweit rechtlich zulässig – der Sitz des Auftragnehmers.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-medium mb-2">13. Salvatorische Klausel</h3>
+                <p>
+                  Sollte eine Bestimmung dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Die Parteien verpflichten sich, die unwirksame Regelung durch eine wirtschaftlich gleichwertige Regelung zu ersetzen.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center pt-4">
+              <Button 
+                onClick={() => setShowAgb(false)}
+                className="bg-yellow-400 text-black hover:bg-yellow-500"
+              >
+                Schließen
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Datenschutz Modal */}
+      <Dialog open={showDatenschutz} onOpenChange={setShowDatenschutz}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              <FileText className="w-6 h-6" />
+              Datenschutzerklärung
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">1. Verantwortlicher</h3>
+              <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-4">
+                <p><strong>Transport online Handel</strong></p>
+                <p>Ostenstr 6</p>
+                <p>68794 Oberhausen-Rheinhausen</p>
+                <p>Deutschland</p>
+                <p><strong>E-Mail:</strong> app2023trans@gmail.com</p>
+                <p><strong>Vertretungsberechtigt:</strong> Geschäftsführer Tin Matijasevic</p>
+              </div>
+              <p>
+                Verantwortlich für die Datenverarbeitung auf dieser Website und im Rahmen der Geschäftsabwicklung ist oben genannter Anbieter.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">2. Erhebung und Speicherung personenbezogener Daten sowie Art und Zweck der Verwendung</h3>
+              <p className="mb-2">Wir verarbeiten personenbezogene Daten, die wir im Rahmen von Anfragen, Angeboten oder der Durchführung von Transportaufträgen von unseren Kunden erhalten. Dazu gehören:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-4">
+                <li>Name, Vorname</li>
+                <li>Anschrift</li>
+                <li>Telefonnummer</li>
+                <li>E-Mail-Adresse</li>
+                <li>Rechnungs- und Zahlungsdaten</li>
+                <li>Informationen zu Transportgütern (soweit personenbezogen)</li>
+              </ul>
+              
+              <h4 className="text-yellow-400 font-medium mb-2">Zweck der Verarbeitung:</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-4">
+                <li>Angebotserstellung</li>
+                <li>Vertragserfüllung und Kundenkommunikation</li>
+                <li>Rechnungsstellung und Buchhaltung</li>
+                <li>rechtliche Verpflichtungen (z. B. Aufbewahrungspflichten)</li>
+              </ul>
+
+              <h4 className="text-yellow-400 font-medium mb-2">Rechtsgrundlagen gemäß Art. 6 DSGVO:</h4>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</li>
+                <li>Art. 6 Abs. 1 lit. c DSGVO (rechtliche Verpflichtung)</li>
+                <li>Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse, z. B. Direktwerbung an Bestandskunden)</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">3. Weitergabe von Daten an Dritte</h3>
+              <p className="mb-2">Personenbezogene Daten werden nur weitergegeben, wenn dies zur Vertragsabwicklung notwendig ist, etwa an:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-4">
+                <li>Spediteure, Transportunternehmen, Subunternehmer</li>
+                <li>Steuerberater oder Buchhaltungsdienstleister</li>
+                <li>Zahlungsdienstleister (z. B. Bankinstitute)</li>
+                <li>Behörden bei gesetzlicher Verpflichtung</li>
+              </ul>
+              <p>
+                Eine Übermittlung an ein Drittland oder eine internationale Organisation erfolgt nicht, sofern nicht explizit im Rahmen der Transportleistung erforderlich (z. B. bei Zollabwicklung).
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">4. Speicherdauer</h3>
+              <p>
+                Personenbezogene Daten werden nur so lange gespeichert, wie es für die Erfüllung der vertraglichen und gesetzlichen Pflichten notwendig ist. Nach Ablauf gesetzlicher Aufbewahrungsfristen (z. B. 6 oder 10 Jahre gemäß HGB und AO) werden die Daten gelöscht.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">5. Betroffenenrechte</h3>
+              <p className="mb-2">Sie haben jederzeit das Recht auf:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-4">
+                <li>Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO)</li>
+                <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO)</li>
+                <li>Löschung Ihrer Daten (Art. 17 DSGVO)</li>
+                <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+                <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+                <li>Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
+              </ul>
+              <p>
+                Zur Ausübung Ihrer Rechte wenden Sie sich bitte an die im Impressum angegebene Adresse oder per E-Mail an: app2023trans@gmail.com
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">6. Beschwerderecht</h3>
+              <p>
+                Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde zu beschweren, z. B. bei der Landesbeauftragten für Datenschutz (je nach Bundesland – z. B. Bayern, NRW, etc.)
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">7. Datensicherheit</h3>
+              <p>
+                Wir setzen technische und organisatorische Maßnahmen ein, um Ihre Daten gegen Manipulation, Verlust, Zerstörung oder unbefugten Zugriff zu schützen.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-yellow-400 font-medium mb-2">8. Änderungen dieser Datenschutzerklärung</h3>
+              <p>
+                Wir behalten uns vor, diese Datenschutzerklärung jederzeit an rechtliche oder technische Änderungen anzupassen. Die jeweils aktuelle Version finden Sie auf unserer Website oder erhalten Sie auf Anfrage in Papierform.
+              </p>
+            </div>
+
+            <div className="text-center pt-4">
+              <Button 
+                onClick={() => setShowDatenschutz(false)}
                 className="bg-yellow-400 text-black hover:bg-yellow-500"
               >
                 Schließen
@@ -1359,12 +1607,18 @@ export default function ServiceCheckoutForm() {
           
           {/* Legal Links */}
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a href="#" className="text-yellow-400 hover:text-yellow-300 transition-colors">
+            <button 
+              onClick={() => setShowAgb(true)}
+              className="text-yellow-400 hover:text-yellow-300 transition-colors"
+            >
               AGB
-            </a>
-            <a href="#" className="text-yellow-400 hover:text-yellow-300 transition-colors">
+            </button>
+            <button 
+              onClick={() => setShowDatenschutz(true)}
+              className="text-yellow-400 hover:text-yellow-300 transition-colors"
+            >
               Datenschutz
-            </a>
+            </button>
             <button 
               onClick={() => setShowImpressum(true)}
               className="text-yellow-400 hover:text-yellow-300 transition-colors"
