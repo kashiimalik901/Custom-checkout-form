@@ -1,5 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server"
 
+// Function to check if a place is in Germany only
+function isInGermany(formattedAddress: string): boolean {
+  const address = formattedAddress.toLowerCase()
+  
+  // Check for German country names in the address
+  const germanIndicators = [
+    'germany', 'deutschland', 'de', 'd-'
+  ]
+  
+  return germanIndicators.some(indicator => 
+    address.includes(indicator.toLowerCase())
+  )
+}
+
 // Function to check if a place is in one of the allowed countries
 function isInAllowedCountry(formattedAddress: string): boolean {
   const address = formattedAddress.toLowerCase()
@@ -19,7 +33,7 @@ function isInAllowedCountry(formattedAddress: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const { query, region } = await request.json()
+    const { query, region, isPickup } = await request.json()
 
     if (!query) {
       return NextResponse.json({ success: false, message: "Query is required" }, { status: 400 })
@@ -63,12 +77,14 @@ export async function POST(request: NextRequest) {
     if (data.places && data.places.length > 0) {
       console.log(`Found ${data.places.length} places for query: "${query}"`)
       
-      // Filter places to only include those from allowed countries
+      // Filter places based on whether it's pickup (Germany only) or destination (all allowed countries)
       const filteredPlaces = data.places
         .filter((place: any) => {
-          const isAllowed = isInAllowedCountry(place.formattedAddress)
+          const isAllowed = isPickup 
+            ? isInGermany(place.formattedAddress) 
+            : isInAllowedCountry(place.formattedAddress)
           if (!isAllowed) {
-            console.log(`Filtered out: ${place.formattedAddress}`)
+            console.log(`Filtered out ${isPickup ? '(pickup - Germany only)' : '(destination)'}: ${place.formattedAddress}`)
           }
           return isAllowed
         })

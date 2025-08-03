@@ -103,6 +103,7 @@ export default function ServiceCheckoutForm() {
         body: JSON.stringify({
           query: query,
           region: "US", // You can change this or make it dynamic
+          isPickup: isPickup,
         }),
       })
 
@@ -857,7 +858,7 @@ export default function ServiceCheckoutForm() {
                     value={formData.startAddress}
                     onChange={(e) => handlePickupChange(e.target.value)}
                     className="bg-black border-gray-600 text-white focus:border-yellow-400 mt-2 pr-10"
-                    placeholder="Abholadresse eingeben..."
+                    placeholder="Abholadresse in Deutschland eingeben..."
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     {isSearchingPickup ? (
@@ -884,7 +885,7 @@ export default function ServiceCheckoutForm() {
                   </div>
                 )}
 
-                <p className="text-sm text-gray-400 mt-1">Beginnen Sie mit der Eingabe, um Adressvorschläge in Deutschland, Österreich, Slowenien und Kroatien zu sehen</p>
+                <p className="text-sm text-gray-400 mt-1">Beginnen Sie mit der Eingabe, um Adressvorschläge in Deutschland zu sehen</p>
               </div>
 
               <div className="autocomplete-container relative">
