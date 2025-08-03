@@ -37,6 +37,8 @@ export default function ServiceCheckoutForm() {
   const [showVipTransfer, setShowVipTransfer] = useState(false)
   const [vipAmount, setVipAmount] = useState("")
   const [isVipTransfer, setIsVipTransfer] = useState(false)
+  const [showManualPayment, setShowManualPayment] = useState(false)
+  const [isSendingManualPayment, setIsSendingManualPayment] = useState(false)
   
   const [formData, setFormData] = useState({
     customerName: "",
@@ -589,6 +591,132 @@ export default function ServiceCheckoutForm() {
         </DialogContent>
       </Dialog>
 
+      {/* Manual Payment Modal */}
+      <Dialog open={showManualPayment} onOpenChange={setShowManualPayment}>
+        <DialogContent className="bg-gray-900 border-yellow-400 border-2 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-yellow-400 flex items-center gap-2 text-xl">
+              💳 Überweisung - Banküberweisung
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="bg-yellow-900 border border-yellow-400 rounded-lg p-4 mb-4">
+                <h3 className="text-yellow-400 font-bold text-lg mb-2">🏦 Banküberweisung</h3>
+                <p className="text-gray-300 text-sm">
+                  Bitte überweisen Sie den Betrag an die folgenden Bankdaten. Die Zahlungsanweisung wird an Ihre E-Mail-Adresse gesendet.
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+              <h4 className="text-yellow-400 font-medium mb-3">Bankdaten</h4>
+              <div className="space-y-2 text-sm">
+                <p><strong>Empfänger:</strong> Transport Online Handel</p>
+                <p><strong>IBAN:</strong> DE76 7002 0270 0045 0809 78</p>
+                <p><strong>BIC:</strong> HYVEDEMMXXX</p>
+                <p><strong>Betrag:</strong> €{totalCost.toFixed(2)}</p>
+                <p><strong>Verwendungszweck:</strong> ENGEL-TRANS {formData.customerName}</p>
+              </div>
+            </div>
+
+            <div className="bg-blue-900 border border-blue-400 rounded-lg p-4">
+              <h4 className="text-blue-400 font-medium mb-2">⚠️ Wichtige Hinweise</h4>
+              <ul className="text-sm space-y-1 text-blue-300">
+                <li>• Bitte geben Sie Ihren Namen als Verwendungszweck an</li>
+                <li>• Die Zahlung wird nach Eingang bestätigt</li>
+                <li>• Sie erhalten eine E-Mail mit den Zahlungsdetails</li>
+                <li>• Service wird nach Zahlungseingang geplant</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={() => setShowManualPayment(false)}
+                variant="outline"
+                className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                Abbrechen
+              </Button>
+              <Button
+                onClick={async () => {
+                  setIsSendingManualPayment(true)
+                  try {
+                    // Send manual payment instructions email
+                    const response = await fetch("/api/send-manual-payment", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        customerName: formData.customerName,
+                        email: formData.email,
+                        phone: formData.phone,
+                        bookingDate: formData.bookingDate ? formData.bookingDate.toISOString().split('T')[0] : null,
+                        bookingTime: formData.bookingTime,
+                        startAddress: formData.startAddress,
+                        endAddress: formData.endAddress,
+                        distance: formData.distance,
+                        selectedServices: formData.selectedServices,
+                        additionalNotes: formData.additionalNotes,
+                        totalCost: totalCost,
+                      }),
+                    })
+
+                    const result = await response.json()
+                    
+                    if (result.success) {
+                      toast.success("Zahlungsanweisung per E-Mail gesendet!")
+                      setShowManualPayment(false)
+                      
+                      // Reset form after successful manual payment
+                      setFormData({
+                        customerName: "",
+                        email: "",
+                        phone: "",
+                        bookingDate: undefined,
+                        bookingTime: "",
+                        startAddress: "",
+                        endAddress: "",
+                        startPlaceId: "",
+                        endPlaceId: "",
+                        distance: 0,
+                        selectedServices: [],
+                        additionalNotes: "",
+                        estimateRequested: false,
+                      })
+                      setTotalCost(0)
+                      setAttachedFiles([])
+                      setShowPayPal(false)
+                      setIsVipTransfer(false)
+                      setVipAmount("")
+                    } else {
+                      toast.error("Fehler beim Senden der E-Mail. Bitte kontaktieren Sie uns direkt.")
+                    }
+                  } catch (error) {
+                    console.error("Error sending manual payment email:", error)
+                    toast.error("Fehler beim Senden der E-Mail. Bitte kontaktieren Sie uns direkt.")
+                  } finally {
+                    setIsSendingManualPayment(false)
+                  }
+                }}
+                className="flex-1 bg-yellow-400 text-black hover:bg-yellow-500 font-bold"
+                disabled={isSendingManualPayment}
+              >
+                {isSendingManualPayment ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
+                    E-Mail wird gesendet...
+                  </>
+                ) : (
+                  "📧 Zahlungsanweisung senden"
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Main Content - Only shown after age verification */}
       {ageVerified && (
         <div className="min-h-screen bg-black text-white">
@@ -1008,14 +1136,27 @@ export default function ServiceCheckoutForm() {
                 </div>
 
                 <div className="mt-6 space-y-4">
-                  <Button
-                    onClick={handleProceedToPayment}
-                    className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-bold py-3"
-                    disabled={!isVipTransfer && (!formData.customerName || !formData.email || !formData.phone)}
-                  >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    {isVipTransfer ? "🚀 VIP Transfer bezahlen" : "Zur PayPal-Zahlung"}
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleProceedToPayment}
+                      className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-bold py-3"
+                      disabled={!isVipTransfer && (!formData.customerName || !formData.email || !formData.phone)}
+                    >
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      {isVipTransfer ? "🚀 VIP Transfer bezahlen" : "Zur PayPal-Zahlung"}
+                    </Button>
+                    
+                    {!isVipTransfer && (
+                      <Button
+                        onClick={() => setShowManualPayment(true)}
+                        variant="outline"
+                        className="w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black font-bold py-3"
+                        disabled={!formData.customerName || !formData.email || !formData.phone}
+                      >
+                        🏦 Überweisung (Banküberweisung)
+                      </Button>
+                    )}
+                  </div>
 
                   {showPayPal && (
                     <div id="paypal-section" className="mt-4">
