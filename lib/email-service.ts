@@ -26,7 +26,7 @@ const createTransporter = () => {
   console.log('Creating email transporter...')
   console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Not set')
   console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Set' : 'Not set')
-  
+
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
     throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD environment variables.')
   }
@@ -223,7 +223,7 @@ const createManualPaymentHTML = (data: EmailData) => {
         <div class="footer">
           <p><strong>Servicebereich:</strong> Deutschland, Österreich, Slowenien, Kroatien</p>
           <p><strong>Alle Preise inklusive 19% deutscher MwSt</strong></p>
-          <p><strong>Kontakt:</strong> app2023trans@gmail.com | +49 152 13550785</p>
+          <p><strong>Kontakt:</strong> kashiimalik901@gmail.com | +49 152 13550785</p>
         </div>
       </div>
     </body>
@@ -351,7 +351,7 @@ const logQuoteToConsole = (data: EmailData) => {
     })
   }
   console.log(`📞 Next Action: Contact customer within 24 hours with detailed quote`)
-  console.log(`📧 Email sent to: app2023trans@gmail.com`)
+  console.log(`📧 Email sent to: kashiimalik901@gmail.com`)
   console.log(`📧 CC sent to: kashiimalick@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
@@ -379,7 +379,7 @@ const logOrderConfirmationToConsole = (data: PaymentData) => {
   }
   console.log(`📞 Next Action: Contact customer within 24 hours to confirm service details`)
   console.log(`📞 Customer Contact: ${data.phone} | ${data.email}`)
-  console.log(`📧 Email sent to: app2023trans@gmail.com`)
+  console.log(`📧 Email sent to: kashiimalik901@gmail.com`)
   console.log(`📧 CC sent to: kashiimalick@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
@@ -412,7 +412,7 @@ const logManualPaymentToConsole = (data: EmailData) => {
   console.log(`   Betrag: €${data.totalCost?.toFixed(2) || '0.00'}`)
   console.log(`   Verwendungszweck: ENGEL-TRANS ${data.customerName}`)
   console.log(`📧 Payment instructions sent to: ${data.email}`)
-  console.log(`📧 CC sent to: app2023trans@gmail.com`)
+  console.log(`📧 CC sent to: kashiimalik901@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
 
@@ -423,27 +423,27 @@ export const sendQuoteEmail = async (data: EmailData) => {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       console.log('⚠️ Email credentials not configured. Logging quote to console instead.')
       logQuoteToConsole(data)
-      return { 
-        success: true, 
+      return {
+        success: true,
         messageId: 'console-log',
-        message: 'Quote logged to console (email not configured)' 
+        message: 'Quote logged to console (email not configured)'
       }
     }
 
     console.log('Starting quote email send process...')
-    console.log('Sending to: app2023trans@gmail.com')
+    console.log('Sending to: kashiimalik901@gmail.com')
     console.log('CC to: kashiimalick@gmail.com')
     const transporter = createTransporter()
-    
+
     // Verify transporter
     await transporter.verify()
     console.log('Email transporter verified successfully')
-    
-         const mailOptions: any = {
-       from: process.env.EMAIL_USER,
-       to: 'kashiimalick@gmail.com', // Your email address
-       cc: 'app2023trans@gmail.com', // CC to business email
-       subject: `Transport Quote Request - ${data.customerName} (${data.distance}km)`,
+
+    const mailOptions: any = {
+      from: process.env.EMAIL_USER,
+      to: 'kashiimalick@gmail.com', // Your email address
+      cc: 'kashiimalik901@gmail.com', // CC to business email
+      subject: `Transport Quote Request - ${data.customerName} (${data.distance}km)`,
       html: createQuoteEmailHTML(data),
       text: `
 NEW QUOTE REQUEST - ENGEL-TRANS
@@ -472,19 +472,26 @@ Next Action: Contact customer within 24 hours with detailed quote
     }
 
     // Add attachments if any
+    // Add attachments if any
     if (data.attachments && data.attachments.length > 0) {
       console.log(`Adding ${data.attachments.length} attachments to email`)
-      mailOptions.attachments = await Promise.all(data.attachments.map(async file => {
-        // Convert File to Buffer for nodemailer
-        const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        
-        return {
-          filename: file.name,
-          content: buffer,
-          contentType: file.type,
-        }
-      }))
+      mailOptions.attachments = await Promise.all(
+        data.attachments.map(async (file) => {
+          // Convert File to Buffer for nodemailer
+          const arrayBuffer = await file.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+
+          return {
+            filename: file.name,
+            content: buffer,
+            contentType: file.type,
+          }
+        }),
+      )
+    } else {
+      // Explicitly set attachments to empty array when no attachments
+      mailOptions.attachments = []
+      console.log("No attachments to add")
     }
 
     console.log('Sending quote email...')
@@ -495,15 +502,15 @@ Next Action: Contact customer within 24 hours with detailed quote
     console.error('Error sending quote email:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Detailed error:', errorMessage)
-    
+
     // Fallback to console logging if email fails
     console.log('⚠️ Quote email failed. Logging to console as fallback.')
     logQuoteToConsole(data)
-    
-    return { 
-      success: false, 
+
+    return {
+      success: false,
       error: errorMessage,
-      message: 'Quote email failed but logged to console' 
+      message: 'Quote email failed but logged to console'
     }
   }
 }
@@ -515,27 +522,27 @@ export const sendOrderConfirmationEmail = async (data: PaymentData) => {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       console.log('⚠️ Email credentials not configured. Logging order confirmation to console instead.')
       logOrderConfirmationToConsole(data)
-      return { 
-        success: true, 
+      return {
+        success: true,
         messageId: 'console-log',
-        message: 'Order confirmation logged to console (email not configured)' 
+        message: 'Order confirmation logged to console (email not configured)'
       }
     }
 
     console.log('Starting order confirmation email send process...')
-    console.log('Sending to: app2023trans@gmail.com')
+    console.log('Sending to: kashiimalik901@gmail.com')
     console.log('CC to: kashiimalick@gmail.com')
     const transporter = createTransporter()
-    
+
     // Verify transporter
     await transporter.verify()
     console.log('Email transporter verified successfully')
-    
-         const mailOptions: any = {
-       from: process.env.EMAIL_USER,
-       to: 'kashiimalick@gmail.com', // Your email address
-       cc: 'app2023trans@gmail.com', // CC to business email
-       subject: `✅ Order Confirmed - ${data.customerName} (Order #${data.orderId})`,
+
+    const mailOptions: any = {
+      from: process.env.EMAIL_USER,
+      to: 'kashiimalick@gmail.com', // Your email address
+      cc: 'kashiimalik901@gmail.com', // CC to business email
+      subject: `✅ Order Confirmed - ${data.customerName} (Order #${data.orderId})`,
       html: createOrderConfirmationHTML(data),
       text: `
 NEW ORDER CONFIRMED - ENGEL-TRANS
@@ -570,19 +577,26 @@ Revenue Generated: €${data.totalCost?.toFixed(2) || '0.00'}
     }
 
     // Add attachments if any
+    // Add attachments if any
     if (data.attachments && data.attachments.length > 0) {
       console.log(`Adding ${data.attachments.length} attachments to email`)
-      mailOptions.attachments = await Promise.all(data.attachments.map(async file => {
-        // Convert File to Buffer for nodemailer
-        const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        
-        return {
-          filename: file.name,
-          content: buffer,
-          contentType: file.type,
-        }
-      }))
+      mailOptions.attachments = await Promise.all(
+        data.attachments.map(async (file) => {
+          // Convert File to Buffer for nodemailer
+          const arrayBuffer = await file.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+
+          return {
+            filename: file.name,
+            content: buffer,
+            contentType: file.type,
+          }
+        }),
+      )
+    } else {
+      // Explicitly set attachments to empty array when no attachments
+      mailOptions.attachments = []
+      console.log("No attachments to add")
     }
 
     console.log('Sending order confirmation email...')
@@ -593,15 +607,15 @@ Revenue Generated: €${data.totalCost?.toFixed(2) || '0.00'}
     console.error('Error sending order confirmation email:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Detailed error:', errorMessage)
-    
+
     // Fallback to console logging if email fails
     console.log('⚠️ Order confirmation email failed. Logging to console as fallback.')
     logOrderConfirmationToConsole(data)
-    
-    return { 
-      success: false, 
+
+    return {
+      success: false,
       error: errorMessage,
-      message: 'Order confirmation email failed but logged to console' 
+      message: 'Order confirmation email failed but logged to console'
     }
   }
 }
@@ -613,26 +627,25 @@ export const sendManualPaymentEmail = async (data: EmailData) => {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       console.log('⚠️ Email credentials not configured. Logging manual payment to console instead.')
       logManualPaymentToConsole(data)
-      return { 
-        success: true, 
+      return {
+        success: true,
         messageId: 'console-log',
-        message: 'Manual payment logged to console (email not configured)' 
+        message: 'Manual payment logged to console (email not configured)'
       }
     }
 
     console.log('Starting manual payment email send process...')
     console.log('Sending to:', data.email)
-    console.log('CC to: app2023trans@gmail.com')
+    console.log('CC to: kashiimalik901@gmail.com')
     const transporter = createTransporter()
-    
+
     // Verify transporter
     await transporter.verify()
     console.log('Email transporter verified successfully')
-    
+
     const mailOptions: any = {
       from: process.env.EMAIL_USER,
       to: data.email, // Send to customer
-      cc: 'app2023trans@gmail.com', // CC to business
       subject: `🏦 Zahlungsanweisung - ENGEL-TRANS (€${data.totalCost?.toFixed(2) || '0.00'})`,
       html: createManualPaymentHTML(data),
       text: `
@@ -672,7 +685,7 @@ Verwendungszweck: ENGEL-TRANS ${data.customerName}
 ---
 Servicebereich: Deutschland, Österreich, Slowenien, Kroatien
 Alle Preise inklusive 19% deutscher MwSt
-Kontakt: app2023trans@gmail.com | +49 152 13550785
+Kontakt: kashiimalik901@gmail.com | +49 152 13550785
       `
     }
 
@@ -684,15 +697,15 @@ Kontakt: app2023trans@gmail.com | +49 152 13550785
     console.error('Error sending manual payment email:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Detailed error:', errorMessage)
-    
+
     // Fallback to console logging if email fails
     console.log('⚠️ Manual payment email failed. Logging to console as fallback.')
     logManualPaymentToConsole(data)
-    
-    return { 
-      success: false, 
+
+    return {
+      success: false,
       error: errorMessage,
-      message: 'Manual payment email failed but logged to console' 
+      message: 'Manual payment email failed but logged to console'
     }
   }
 } 

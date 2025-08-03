@@ -968,10 +968,10 @@ export default function ServiceCheckoutForm() {
 
       {/* Main Content - Only shown after age verification */}
       {ageVerified && (
-        <div className="min-h-screen bg-black text-white">
-          {/* Header */}
-          <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
-            <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-black to-gray-900 border-b-2 border-yellow-400">
+        <div className="container mx-auto px-4 py-6">
                         <h1 className="text-3xl font-bold text-yellow-400 text-center">ENGEL-TRANS</h1>
           <p className="text-gray-300 text-center mt-2">
             ABSCHLEPPEN UND TRANSPORT VON AUTOS/LKW 5T – KONTAKT: +49 152 13550785
@@ -984,18 +984,18 @@ export default function ServiceCheckoutForm() {
               🚀 VIP Transfer - Direktzahlung
             </Button>
           </div>
-            </div>
-          </header>
+        </div>
+      </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Customer Information */}
           <Card className="bg-gray-900 border-yellow-400 border-2">
             <CardHeader>
-                          <CardTitle className="text-yellow-400 flex items-center gap-2">
-              <User className="w-5 h-5" />
+              <CardTitle className="text-yellow-400 flex items-center gap-2">
+                <User className="w-5 h-5" />
               Kundeninformationen
-            </CardTitle>
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -1090,10 +1090,10 @@ export default function ServiceCheckoutForm() {
           {/* Trip Details */}
           <Card className="bg-gray-900 border-yellow-400 border-2">
             <CardHeader>
-                          <CardTitle className="text-yellow-400 flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
+              <CardTitle className="text-yellow-400 flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
               Fahrtdetails
-            </CardTitle>
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="autocomplete-container relative">
@@ -1206,10 +1206,10 @@ export default function ServiceCheckoutForm() {
 
         {/* Service Selection */}
         <Card className="bg-gray-900 border-yellow-400 border-2 mt-8">
-                      <CardHeader>
+          <CardHeader>
               <CardTitle className="text-yellow-400">Dienstleistungen auswählen</CardTitle>
               <p className="text-gray-300">Wählen Sie die benötigten Dienstleistungen. Alle Preise inklusive 19% MwSt (deutscher Steuersatz).</p>
-            </CardHeader>
+          </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {services.map((service) => (
@@ -1338,7 +1338,7 @@ export default function ServiceCheckoutForm() {
                   </>
                 ) : (
                   <>
-                    <Mail className="w-4 h-4 mr-2" />
+                <Mail className="w-4 h-4 mr-2" />
                     Detailliertes Angebot anfordern
                   </>
                 )}
@@ -1377,23 +1377,23 @@ export default function ServiceCheckoutForm() {
                     })}
                   </div>
                   <div className="border-t border-gray-600 pt-2">
-                                      <div className="flex justify-between text-xl font-bold text-yellow-400">
+                    <div className="flex justify-between text-xl font-bold text-yellow-400">
                     <span>Gesamtkosten:</span>
-                    <span>€{totalCost.toFixed(2)}</span>
-                  </div>
+                      <span>€{totalCost.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
 
                 <div className="mt-6 space-y-4">
                   <div className="space-y-3">
-                    <Button
-                      onClick={handleProceedToPayment}
-                      className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-bold py-3"
+                  <Button
+                    onClick={handleProceedToPayment}
+                    className="w-full bg-yellow-400 text-black hover:bg-yellow-500 font-bold py-3"
                       disabled={!isVipTransfer && (!formData.customerName || !formData.email || !formData.phone)}
-                    >
-                      <CreditCard className="w-4 h-4 mr-2" />
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
                       {isVipTransfer ? "🚀 VIP Transfer bezahlen" : "Zur PayPal-Zahlung"}
-                    </Button>
+                  </Button>
                     
                     {!isVipTransfer && (
                       <Button
@@ -1410,8 +1410,8 @@ export default function ServiceCheckoutForm() {
                   {showPayPal && (
                     <div id="paypal-section" className="mt-4">
                       {process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID && process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID !== "YOUR_PAYPAL_CLIENT_ID" ? (
-                        <PayPalScriptProvider options={paypalOptions}>
-                          <PayPalButtons
+                      <PayPalScriptProvider options={paypalOptions}>
+                        <PayPalButtons
                           createOrder={(data, actions) => {
                             return actions.order.create({
                               intent: "CAPTURE",
@@ -1431,25 +1431,25 @@ export default function ServiceCheckoutForm() {
                           onApprove={async (data, actions) => {
                             try {
                               toast.loading("Processing payment...")
-                              const details = await actions.order?.capture()
+                            const details = await actions.order?.capture()
 
-                              // Send order confirmation
+                            // Send order confirmation
                               const response = await fetch("/api/process-payment", {
-                                method: "POST",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                  paymentId: details?.id,
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                paymentId: details?.id,
                                   customerInfo: isVipTransfer ? {
                                     name: "VIP Transfer Customer",
                                     email: "vip@engel-trans.de",
                                     phone: "VIP Transfer",
                                   } : {
-                                    name: formData.customerName,
-                                    email: formData.email,
-                                    phone: formData.phone,
-                                  },
+                                  name: formData.customerName,
+                                  email: formData.email,
+                                  phone: formData.phone,
+                                },
                                   serviceDetails: isVipTransfer ? {
                                     bookingDate: null,
                                     bookingTime: "",
@@ -1461,15 +1461,15 @@ export default function ServiceCheckoutForm() {
                                   } : {
                                     bookingDate: formData.bookingDate ? formData.bookingDate.toISOString().split('T')[0] : null,
                                     bookingTime: formData.bookingTime,
-                                    startAddress: formData.startAddress,
-                                    endAddress: formData.endAddress,
-                                    distance: formData.distance,
-                                    services: formData.selectedServices,
-                                    notes: formData.additionalNotes,
-                                  },
-                                  totalAmount: totalCost,
-                                }),
-                              })
+                                  startAddress: formData.startAddress,
+                                  endAddress: formData.endAddress,
+                                  distance: formData.distance,
+                                  services: formData.selectedServices,
+                                  notes: formData.additionalNotes,
+                                },
+                                totalAmount: totalCost,
+                              }),
+                            })
 
                               const result = await response.json()
                               toast.dismiss()
@@ -1514,21 +1514,21 @@ export default function ServiceCheckoutForm() {
                               toast.error("Payment processing failed. Please try again or contact support.")
                             }
                           }}
-                                                      onError={(err) => {
-                              console.error("PayPal error:", err)
+                          onError={(err) => {
+                            console.error("PayPal error:", err)
                               toast.error("Payment failed. Please try again or contact support.")
                             }}
                             onCancel={() => {
                               toast.info("Payment cancelled by user")
-                            }}
-                                                      style={{
-                              layout: "vertical",
-                              color: "gold",
-                              shape: "rect",
-                              label: "paypal",
-                            }}
-                          />
-                        </PayPalScriptProvider>
+                          }}
+                          style={{
+                            layout: "vertical",
+                            color: "gold",
+                            shape: "rect",
+                            label: "paypal",
+                          }}
+                        />
+                      </PayPalScriptProvider>
                       ) : (
                         <div className="bg-yellow-900 border border-yellow-400 p-4 rounded-lg">
                           <p className="text-yellow-400">
@@ -1628,7 +1628,7 @@ export default function ServiceCheckoutForm() {
           </div>
         </div>
       </footer>
-        </div>
+    </div>
       )}
     </>
   )
