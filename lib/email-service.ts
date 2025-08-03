@@ -32,15 +32,16 @@ const createTransporter = () => {
   }
 
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'mail.privateemail.com',
+    port: 465,
+    secure: true, // SSL
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.EMAIL_USER,     // sales@engel-trans.de
+      pass: process.env.EMAIL_PASSWORD, // your account password
     },
-    secure: true,
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false, // Avoid certificate issues (optional)
+    },
   })
 }
 
