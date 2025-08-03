@@ -1,35 +1,108 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 // Function to check if a place is in Germany only
+// Function to check if a place is in Germany only
 function isInGermany(formattedAddress: string): boolean {
   const address = formattedAddress.toLowerCase()
-  
-  // Check for German country names in the address
+
+  // More comprehensive German indicators including postal codes and common terms
   const germanIndicators = [
-    'germany', 'deutschland', 'de', 'd-'
+    'germany', 'deutschland', 'de', 'd-',
+    // Common German terms that might appear in addresses
+    'bundesrepublik deutschland',
+    // Check for German postal code patterns (5 digits)
+    /\b\d{5}\b.*deutschland/,
+    /\b\d{5}\b.*germany/,
+    // Check if address ends with Germany/Deutschland
+    /,\s*deutschland\s*$/,
+    /,\s*germany\s*$/
   ]
-  
-  return germanIndicators.some(indicator => 
-    address.includes(indicator.toLowerCase())
-  )
+
+  return germanIndicators.some(indicator => {
+    if (typeof indicator === 'string') {
+      return address.includes(indicator.toLowerCase())
+    } else {
+      // Handle regex patterns
+      return indicator.test(address)
+    }
+  })
 }
 
 // Function to check if a place is in one of the allowed countries
 function isInAllowedCountry(formattedAddress: string): boolean {
   const address = formattedAddress.toLowerCase()
-  
-  // Check for country names in the address
+
+  // More comprehensive country indicators
   const countryIndicators = [
-    'germany', 'deutschland', 'de', 'd-',
-    'austria', 'österreich', 'at',
-    'slovenia', 'slovenija', 'si',
-    'croatia', 'hrvatska', 'hr'
+    // Germany
+    'germany', 'deutschland', 'de', 'd-', 'bundesrepublik deutschland',
+    // Austria
+    'austria', 'österreich', 'at', 'republik österreich',
+    // Slovenia
+    'slovenia', 'slovenija', 'si', 'republika slovenija',
+    // Croatia
+    'croatia', 'hrvatska', 'hr', 'republika hrvatska'
   ]
-  
-  return countryIndicators.some(indicator => 
+
+  // Also check for country codes at the end of addresses
+  const countryCodePatterns = [
+    /,\s*(germany|deutschland)\s*$/,
+    /,\s*(austria|österreich)\s*$/,
+    /,\s*(slovenia|slovenija)\s*$/,
+    /,\s*(croatia|hrvatska)\s*$/
+  ]
+
+  const hasCountryIndicator = countryIndicators.some(indicator =>
     address.includes(indicator.toLowerCase())
   )
+
+  const hasCountryCode = countryCodePatterns.some(pattern =>
+    pattern.test(address)
+  )
+
+  return hasCountryIndicator || hasCountryCode
 }
+
+// Alternative approach using address components for more reliable detection
+function isInGermanyByComponents(addressComponents: any[]): boolean {
+  if (!addressComponents) return false
+  
+  const country = addressComponents.find((comp: any) => 
+    comp.types.includes('country')
+  )
+  
+  return country?.shortText === 'DE' || 
+         country?.longText?.toLowerCase().includes('germany') ||
+         country?.longText?.toLowerCase().includes('deutschland')
+}
+
+function isInAllowedCountryByComponents(addressComponents: any[]): boolean {
+  if (!addressComponents) return false
+  
+  const country = addressComponents.find((comp: any) => 
+    comp.types.includes('country')
+  )
+  
+  const allowedCountryCodes = ['DE', 'AT', 'SI', 'HR']
+  const allowedCountryNames = [
+    'germany', 'deutschland',
+    'austria', 'österreich', 
+    'slovenia', 'slovenija',
+    'croatia', 'hrvatska'
+  ]
+  
+  if (country?.shortText && allowedCountryCodes.includes(country.shortText)) {
+    return true
+  }
+  
+  if (country?.longText) {
+    const countryName = country.longText.toLowerCase()
+    return allowedCountryNames.some(name => countryName.includes(name))
+  }
+  
+  return false
+}
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,13 +149,17 @@ export async function POST(request: NextRequest) {
 
     if (data.places && data.places.length > 0) {
       console.log(`Found ${data.places.length} places for query: "${query}"`)
-      
+
       // Filter places based on whether it's pickup (Germany only) or destination (all allowed countries)
       const filteredPlaces = data.places
         .filter((place: any) => {
-          const isAllowed = isPickup 
-            ? isInGermany(place.formattedAddress) 
-            : isInAllowedCountry(place.formattedAddress)
+          // Try address components first (more reliable), fallback to formatted address
+          const useComponents = place.addressComponents && place.addressComponents.length > 0
+
+          const isAllowed = isPickup
+            ? (useComponents ? isInGermanyByComponents(place.addressComponents) : isInGermany(place.formattedAddress))
+            : (useComponents ? isInAllowedCountryByComponents(place.addressComponents) : isInAllowedCountry(place.formattedAddress))
+
           if (!isAllowed) {
             console.log(`Filtered out ${isPickup ? '(pickup - Germany only)' : '(destination)'}: ${place.formattedAddress}`)
           }
@@ -92,23 +169,23 @@ export async function POST(request: NextRequest) {
         .map((place: any) => {
           // Create a better display name that emphasizes street address
           let displayName = place.displayName?.text || place.formattedAddress
-          
+
           // If we have address components, try to create a more street-focused display
           if (place.addressComponents) {
-            const streetNumber = place.addressComponents.find((comp: any) => 
+            const streetNumber = place.addressComponents.find((comp: any) =>
               comp.types.includes('street_number')
             )?.longText
-            const route = place.addressComponents.find((comp: any) => 
+            const route = place.addressComponents.find((comp: any) =>
               comp.types.includes('route')
             )?.longText
-            
+
             if (streetNumber && route) {
               displayName = `${streetNumber} ${route}, ${place.formattedAddress.split(',').slice(-2).join(', ')}`
             } else if (route) {
               displayName = `${route}, ${place.formattedAddress.split(',').slice(-2).join(', ')}`
             }
           }
-          
+
           return {
             place_id: place.id,
             display_name: displayName,
