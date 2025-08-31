@@ -6,7 +6,7 @@ import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: 'ENGEL-TRANS - Professional Towing & Transport Services',
-  description: 'TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: 996-238 8338',
+  description: 'TOWING AND TRANSFERRING CARS/TRUCKS 5T – CONTACT: +49 152 13550785',
   generator: 'Next.js',
 }
 

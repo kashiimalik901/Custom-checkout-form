@@ -223,7 +223,7 @@ const createManualPaymentHTML = (data: EmailData) => {
         <div class="footer">
           <p><strong>Servicebereich:</strong> Deutschland, Österreich, Slowenien, Kroatien</p>
           <p><strong>Alle Preise inklusive 19% deutscher MwSt</strong></p>
-          <p><strong>Kontakt:</strong> kashiimalik901@gmail.com | +49 152 13550785</p>
+          <p><strong>Kontakt:</strong> app2023trans@gmail.com | +49 152 13550785</p>
         </div>
       </div>
     </body>
@@ -351,8 +351,7 @@ const logQuoteToConsole = (data: EmailData) => {
     })
   }
   console.log(`📞 Next Action: Contact customer within 24 hours with detailed quote`)
-  console.log(`📧 Email sent to: kashiimalik901@gmail.com`)
-  console.log(`📧 CC sent to: kashiimalick@gmail.com`)
+  console.log(`📧 Email sent to: app2023trans@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
 
@@ -379,8 +378,7 @@ const logOrderConfirmationToConsole = (data: PaymentData) => {
   }
   console.log(`📞 Next Action: Contact customer within 24 hours to confirm service details`)
   console.log(`📞 Customer Contact: ${data.phone} | ${data.email}`)
-  console.log(`📧 Email sent to: kashiimalik901@gmail.com`)
-  console.log(`📧 CC sent to: kashiimalick@gmail.com`)
+  console.log(`📧 Email sent to: app2023trans@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
 
@@ -412,7 +410,7 @@ const logManualPaymentToConsole = (data: EmailData) => {
   console.log(`   Betrag: €${data.totalCost?.toFixed(2) || '0.00'}`)
   console.log(`   Verwendungszweck: ENGEL-TRANS ${data.customerName}`)
   console.log(`📧 Payment instructions sent to: ${data.email}`)
-  console.log(`📧 CC sent to: kashiimalik901@gmail.com`)
+  console.log(`📧 CC sent to: app2023trans@gmail.com`)
   console.log('='.repeat(60) + '\n')
 }
 
@@ -431,8 +429,7 @@ export const sendQuoteEmail = async (data: EmailData) => {
     }
 
     console.log('Starting quote email send process...')
-    console.log('Sending to: kashiimalik901@gmail.com')
-    console.log('CC to: kashiimalick@gmail.com')
+    console.log('Sending to: app2023trans@gmail.com')
     const transporter = createTransporter()
 
     // Verify transporter
@@ -441,8 +438,7 @@ export const sendQuoteEmail = async (data: EmailData) => {
 
     const mailOptions: any = {
       from: process.env.EMAIL_USER,
-      to: 'kashiimalick@gmail.com', // Your email address
-      cc: 'kashiimalik901@gmail.com', // CC to business email
+      to: 'app2023trans@gmail.com', // CC to business email
       subject: `Transport Quote Request - ${data.customerName} (${data.distance}km)`,
       html: createQuoteEmailHTML(data),
       text: `
@@ -530,8 +526,7 @@ export const sendOrderConfirmationEmail = async (data: PaymentData) => {
     }
 
     console.log('Starting order confirmation email send process...')
-    console.log('Sending to: kashiimalik901@gmail.com')
-    console.log('CC to: kashiimalick@gmail.com')
+    console.log('Sending to: app2023trans@gmail.com')
     const transporter = createTransporter()
 
     // Verify transporter
@@ -540,8 +535,7 @@ export const sendOrderConfirmationEmail = async (data: PaymentData) => {
 
     const mailOptions: any = {
       from: process.env.EMAIL_USER,
-      to: 'kashiimalick@gmail.com', // Your email address
-      cc: 'kashiimalik901@gmail.com', // CC to business email
+      to: 'app2023trans@gmail.com', // CC to business email
       subject: `✅ Order Confirmed - ${data.customerName} (Order #${data.orderId})`,
       html: createOrderConfirmationHTML(data),
       text: `
@@ -636,7 +630,7 @@ export const sendManualPaymentEmail = async (data: EmailData) => {
 
     console.log('Starting manual payment email send process...')
     console.log('Sending to:', data.email)
-    console.log('CC to: kashiimalik901@gmail.com')
+    console.log('CC to: app2023trans@gmail.com')
     const transporter = createTransporter()
 
     // Verify transporter
@@ -685,7 +679,7 @@ Verwendungszweck: ENGEL-TRANS ${data.customerName}
 ---
 Servicebereich: Deutschland, Österreich, Slowenien, Kroatien
 Alle Preise inklusive 19% deutscher MwSt
-Kontakt: kashiimalik901@gmail.com | +49 152 13550785
+Kontakt: app2023trans@gmail.com | +49 152 13550785
       `
     }
 

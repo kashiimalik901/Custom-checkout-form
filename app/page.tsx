@@ -18,10 +18,11 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 
 const services = [
-  { id: "towing-germany", name: "Abschleppen innerhalb Deutschlands", baseFee: 60, pricePerKm: 1.0, description: "€60 Grundgebühr + €1 pro km" },
-  { id: "towing-outside", name: "Abschleppen außerhalb Deutschlands", baseFee: 100, pricePerKm: 0.8, description: "€100 Grundgebühr + €0.80 pro km" },
-  { id: "moving", name: "Umzugsservice", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
-  { id: "vehicle-transfer", name: "Überführung Auf Eigene Achse( mit Tüv oder Ohne Tüv  Versichert)", baseFee: 0, pricePerKm: 1.5, description: "€1.50 pro km (keine Grundgebühr)" },
+  { id: "towing-germany", name: "Abschleppen innerhalb Deutschlands", baseFee: 150, pricePerKm: 1.5, description: "€150 Grundgebühr + €1.50 pro km" },
+  { id: "towing-outside", name: "Abschleppen außerhalb Deutschlands", baseFee: 150, pricePerKm: 0.8, description: "€150 Grundgebühr + €0.80 pro km" },
+  { id: "moving", name: "Umzugsservice", baseFee: 150, pricePerKm: 3.6, description: "€150 Grundgebühr + €3.60 pro km" },
+  { id: "vehicle-transfer", name: "Überführung Auf Eigene Achse( mit Tüv oder Ohne Tüv  Versichert)", baseFee: 150, pricePerKm: 1.5, description: "€150 Grundgebühr + €1.50 pro km" },
+  { id: "moving-helper", name: "Helfer Für Umzug", baseFee: 0, pricePerKm: 0, pricePerHour: 30, description: "€30 pro Stunde pro Person" },
 ]
 
 interface PlaceSuggestion {
